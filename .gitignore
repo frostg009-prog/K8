@@ -10,3 +10,6 @@ route/*.ses
 hardware/packages/
 route/fast/
 route/logs/
+route/r6/
+route/r20/
+route/noin2/

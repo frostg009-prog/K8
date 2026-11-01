@@ -231,10 +231,13 @@ def main(out):
     ncls('DIFF90', 0.17, 0.15, 0.17, 0.15)
     ncls('PWR_HI', 0.8, 0.2, via=(0.6, 0.3))
     ncls('PWR_MID', 0.4, 0.15, via=(0.6, 0.3))
+    ncls('PLANE', 0.3, 0.15, via=(0.6, 0.3))
     for n in DIFF100: ns.SetNetclassPatternAssignment(n, 'DIFF100')
     for n in DIFF90: ns.SetNetclassPatternAssignment(n, 'DIFF90')
+    PLANES = ('GND', '+5V_CM5', '+5V_AUX', 'VIN_PROT')
     for n in POWER_HI:
-        if n != 'GND': ns.SetNetclassPatternAssignment(n, 'PWR_HI')
+        if n not in PLANES: ns.SetNetclassPatternAssignment(n, 'PWR_HI')
+    for n in PLANES: ns.SetNetclassPatternAssignment(n, 'PLANE')
     for n in POWER_MID: ns.SetNetclassPatternAssignment(n, 'PWR_MID')
     def zone(netname, layer, pts, prio=0, clr=0.25):
         z = pcbnew.ZONE(B); z.SetLayer(layer); z.SetNet(net(netname)); z.SetAssignedPriority(prio)

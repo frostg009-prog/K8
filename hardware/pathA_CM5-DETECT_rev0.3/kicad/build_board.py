@@ -197,7 +197,7 @@ def main(out):
     G3 = HERE + '/lib/gen3d/'
     MODELS = {'M1': ('CM5_with_cooler', (0, 0, 0)), 'J_USB1': ('USB_C_receptacle', (0, -0.5, 0)), 'J_USB2': ('USB_C_receptacle', (0, -0.5, 0)),
               'L_B1': ('Inductor_7x6', (0, 0, 0)), 'L_B2': ('Inductor_7x6', (0, 0, 0)), 'U_B1': ('SOP8_EP', (0, 0, 0)), 'U_B2': ('SOP8_EP', (0, 0, 0)),
-              'SC1': ('SuperCap_D10_L20', (0, 0, 0)), 'SC2': ('SuperCap_D10_L20', (0, 0, 0)), 'F1': ('Fuse_2410', (0, 0, 0))}
+              'SC1': ('SuperCap_D10_L20', (0, 0, 0)), 'SC2': ('SuperCap_D10_L20', (0, 0, 0)), 'F1': ('Fuse_2410', (0, 0, 0)), 'J_BAT': ('XT60PW', (0, 0, 0)), 'J_BAT2': ('XT30PW', (0, 0, 0))}
     for ref, (m, off) in MODELS.items():
         fp = placed[ref]
         if ref != 'M1':

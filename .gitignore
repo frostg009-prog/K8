@@ -8,3 +8,5 @@ route/board.dsn
 route/fr.log
 route/*.ses
 hardware/packages/
+route/fast/
+route/logs/

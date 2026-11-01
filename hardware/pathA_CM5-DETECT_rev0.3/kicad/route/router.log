@@ -1,0 +1,15 @@
+OK   CAM1_C_P         0s
+OK   CAM1_C_N         0s
+OK   CAM1_D0_P        0s
+FAIL CAM1_D0_N        1s
+OK   CAM1_D1_P        1s
+FAIL CAM1_D1_N        3s
+OK   CAM1_D2_P        3s
+OK   CAM1_D2_N        3s
+OK   CAM1_D3_P        3s
+OK   CAM1_D3_N        3s
+OK   CAM2_C_P         3s
+OK   CAM2_C_N         3s
+OK   CAM2_D0_P        4s
+OK   CAM2_D0_N        4s
+OK   CAM2_D1_P        4s

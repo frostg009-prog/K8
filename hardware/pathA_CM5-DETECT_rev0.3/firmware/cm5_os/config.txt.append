@@ -1,0 +1,29 @@
+# ---- CM5-DETECT rev0.3 (append to /boot/firmware/config.txt)
+# cameras: CAM1 = MIPI0 (cam0), CAM2 = MIPI1 (cam1); IMX477 (HQ) / IMX296 (GS) / IMX708 (Camera 3)
+camera_auto_detect=0
+dtoverlay=imx477,cam0
+dtoverlay=imx477,cam1
+# CAM2 I2C on GPIO0/1 (as CM5 IO board with J6 fitted)
+dtparam=i2c_vc=on
+# UARTs: UART0 (GPIO14/15) -> Matek, UART2 (GPIO4/5) -> GPS/telemetry, UART3 (GPIO8/9) -> supervisor MCU
+enable_uart=1
+dtoverlay=uart0-pi5
+dtoverlay=uart2-pi5
+dtoverlay=uart3-pi5
+# I2C1 (GPIO2/3): temperature sensor NST175 @0x48, external JST-GH I2C, thermal camera aux
+dtparam=i2c_arm=on
+dtoverlay=i2c-sensor,tmp102,addr=0x48
+# servo outputs: hardware PWM on GPIO12,13,18,19
+dtoverlay=pwm-2chan,pin=12,func=4,pin2=13,func2=4
+dtoverlay=pwm-2chan,pin=18,func=2,pin2=19,func2=2
+# USB-C #1 = USB device (gadget: network + serial over USB to the PC); USB-C #2 + thermal USB = host
+dtoverlay=dwc2,dr_mode=peripheral
+# power-fail line from supervisor -> clean shutdown (systemd) ; RUN LED on GPIO20
+dtoverlay=gpio-shutdown,gpio_pin=23,active_low=1,gpio_pull=up,debounce=10
+# PCIe FFC for Hailo (Gen2 official, Gen3 possible but not guaranteed)
+dtparam=pciex1
+dtparam=pciex1_gen=2
+# BCM2712 internal watchdog as second level
+dtparam=watchdog=on
+# fan: CM5 FAN_PWM/TACH pins (JST-GH J_FAN)
+dtparam=fan_temp0=55000,fan_temp1=65000,fan_temp2=75000

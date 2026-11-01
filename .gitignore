@@ -2,3 +2,6 @@ __pycache__/
 *.kicad_prl
 *-backups/
 fp-info-cache
+route/libastar.so
+route/board.dsn
+.price_cache.json

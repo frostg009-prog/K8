@@ -1,0 +1,9 @@
+[Unit]
+Description=CM5-DETECT hardware watchdog heartbeat
+After=multi-user.target
+[Service]
+ExecStart=/usr/local/bin/cm5-heartbeat.py
+Restart=always
+RestartSec=1
+[Install]
+WantedBy=multi-user.target

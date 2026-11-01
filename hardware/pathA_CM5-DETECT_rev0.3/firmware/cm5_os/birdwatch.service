@@ -1,0 +1,14 @@
+[Unit]
+Description=BirdWatch detection (auto start, auto restart, resumes from checkpoint)
+After=network.target
+[Service]
+WorkingDirectory=/opt/birdwatch
+ExecStartPre=/bin/mkdir -p /data/state
+ExecStart=/opt/birdwatch/run.sh --resume /data/state/checkpoint.json
+Restart=always
+RestartSec=1
+# on power fail systemd stops the service first: SIGTERM -> app writes checkpoint (atomic) within 2 s
+TimeoutStopSec=3
+KillSignal=SIGTERM
+[Install]
+WantedBy=multi-user.target

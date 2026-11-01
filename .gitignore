@@ -24,3 +24,5 @@ route/f30/
 **/route/logs/
 **/route/*.log
 **/route/inc/
+**/route/g8/
+**/route/g20/

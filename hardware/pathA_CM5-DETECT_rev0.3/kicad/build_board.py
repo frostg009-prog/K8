@@ -8,7 +8,9 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from design import C, DIFF100, DIFF90, POWER_HI, POWER_MID
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-W, L = 44.0, 134.0
+W, L = 44.0, 157.0
+YK, YS = 68.0, 1.35
+stretch = lambda y: y if y <= YK else YK + (y - YK) * YS
 FM = pcbnew.FromMM
 V = lambda x, y: pcbnew.VECTOR2I(FM(x), FM(y))
 LIBS = {'CM5IO': HERE + '/lib/CM5IO.pretty', 'lcsc': HERE + '/lib/lcsc.pretty', 'custom': HERE + '/lib/custom.pretty'}
@@ -24,7 +26,7 @@ P = {
     'J_USB1': (3.9, 73.2, 270, 'F'), 'J_USB2': (40.1, 73.2, 90, 'F'),
     'U_B1': (7.0, 86.0, 0, 'F'), 'L_B1': (16.5, 86.0, 90, 'F'), 'D_B1': (7.0, 94.0, 0, 'F'), 'D_B1IN': (17.0, 96.5, 0, 'F'),
     'U_B2': (37.0, 86.0, 0, 'F'), 'L_B2': (27.5, 86.0, 90, 'F'), 'D_B2': (36.0, 94.0, 0, 'F'),
-    'J_BAT': (39.6, 117.0, 180, 'F'), 'J_BAT2': (9.5, 119.0, 180, 'F'),
+    'J_BAT': (39.6, 117.0, 180, 'F'), 'J_BAT2': (11.0, 119.0, 180, 'F'),
     'F1': (23.5, 118.0, 90, 'F'), 'D_TVS': (16.5, 112.5, 0, 'B'), 'Q_RP': (36.0, 128.0, 0, 'B'),
     'C_BULK': (24.0, 128.0, 0, 'B'),
     # bottom side
@@ -32,7 +34,7 @@ P = {
     'J_S1': (40.6, 22.4, 270, 'B'), 'J_S2': (40.6, 31.6, 270, 'B'), 'J_S3': (40.6, 57.5, 270, 'B'), 'J_S4': (40.6, 89.0, 270, 'B'),
     'J_SPWR': (40.6, 98.5, 270, 'B'),
     'J_MATEK': (3.4, 57.5, 90, 'B'), 'J_GPS': (3.4, 89.0, 90, 'B'), 'J_I2C': (3.4, 99.0, 90, 'B'),
-    'J_IO': (3.4, 112.0, 90, 'B'), 'J_THU': (3.4, 125.5, 90, 'B'),
+    'J_IO': (3.4, 112.0, 90, 'B'), 'J_THU': (3.4, 126.5, 90, 'B'),
     'J_THA': (22.0, 103.0, 0, 'B'), 'J_FAN': (40.6, 108.0, 270, 'B'), 'J_AIPWR': (30.0, 110.5, 0, 'B'),
     'SC1': (16.0, 69.6, 90, 'B'), 'SC2': (28.0, 69.6, 90, 'B'), 'L_HB': (19.0, 76.5, 0, 'B'), 'U_HB': (25.5, 75.5, 0, 'B'), 'U_CHG': (30.5, 76.5, 0, 'B'), 'D_CHG': (29.0, 80.8, 0, 'B'), 'U_MCU': (20.0, 38.0, 0, 'B'), 'U_TEMP': (30.0, 37.0, 0, 'B'), 'U_C33': (31.0, 11.0, 0, 'B'), 'L_C33': (31.5, 16.5, 0, 'B'),
     'U_AON': (17.0, 11.5, 0, 'B'), 'U_SD': (20.0, 27.0, 0, 'B'),
@@ -42,6 +44,8 @@ P = {
     'Q_PMIC': (14.0, 39.5, 0, 'B'), 'Q_PWB': (14.0, 43.5, 0, 'B'), 'JP_WDT': (24.0, 31.5, 0, 'B'), 'JP_MATEK': (8.5, 57.5, 90, 'B'), 'JP_SERVO': (34.5, 102.5, 90, 'B'),
     'H1': (2.0, 81.6, 0, 'F'), 'H2': (42.0, 81.6, 0, 'F'), 'H3': (2.0, 10.6, 0, 'F'), 'H4': (42.0, 10.6, 0, 'F'),
 }
+P = {k: (v[0], round(stretch(v[1]), 2), v[2], v[3]) if k not in ('H1', 'H2') else v for k, v in P.items()}
+P['H1'] = (2.0, 112.0, 0, 'F'); P['H2'] = (42.0, 112.0, 0, 'F')
 # top side area under the CM5 module is reserved (module sits 1.5 mm above the board)
 CM5_KEEP = (1.5, 12.0, 42.5, 68.2)
 
@@ -249,9 +253,9 @@ def main(out):
     full = [(0.3, 0.3), (W - 0.3, 0.3), (W - 0.3, L - 0.3), (0.3, L - 0.3)]
     zone('GND', pcbnew.In1_Cu, full)
     zone('GND', pcbnew.In2_Cu, full)
-    zone('+5V_CM5', pcbnew.In2_Cu, [(0.5, 30), (13.5, 30), (13.5, 80), (21.5, 80), (21.5, 99.5), (0.5, 99.5)], 1)
-    zone('+5V_AUX', pcbnew.In2_Cu, [(22.5, 80), (43.5, 80), (43.5, 99.5), (22.5, 99.5)], 1)
-    zone('VIN_PROT', pcbnew.In2_Cu, [(0.5, 100.5), (43.5, 100.5), (43.5, 133.7), (0.5, 133.7)], 1)
+    zone('+5V_CM5', pcbnew.In2_Cu, [(0.5, 30), (13.5, 30), (13.5, stretch(80)), (21.5, stretch(80)), (21.5, stretch(99.5)), (0.5, stretch(99.5))], 1)
+    zone('+5V_AUX', pcbnew.In2_Cu, [(22.5, stretch(80)), (43.5, stretch(80)), (43.5, stretch(99.5)), (22.5, stretch(99.5))], 1)
+    zone('VIN_PROT', pcbnew.In2_Cu, [(0.5, stretch(100.5)), (43.5, stretch(100.5)), (43.5, L - 0.3), (0.5, L - 0.3)], 1)
     B.Save(out)
     print('saved', out, len(C), 'footprints', len(nets), 'nets')
 

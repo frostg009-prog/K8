@@ -23,3 +23,4 @@ route/f30/
 **/route/fast/
 **/route/logs/
 **/route/*.log
+**/route/inc/

@@ -53,5 +53,5 @@ ph = os.path.join(out, '01_Photos')
 for name, args in [('top', ['--side', 'top']), ('bottom', ['--side', 'bottom']),
                    ('iso_top', ['--side', 'top', '--rotate', '-35,0,25']), ('iso_bottom', ['--side', 'bottom', '--rotate', '35,0,-25'])]:
     r = run('kicad-cli', 'pcb', 'render', '-o', os.path.join(ph, name + '.png'), '--width', '1400', '--height', '1800',
-            '--quality', 'high', '--background', 'opaque', '--perspective', '--zoom', '0.8', *args, pcb)
+            '--quality', 'high', '--background', 'opaque', '--perspective', '--zoom', '0.72', *args, pcb)
     print(name, r.returncode, r.stderr[-200:])

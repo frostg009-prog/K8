@@ -17,15 +17,16 @@ r = run(sys.executable, HERE + '/make_fab.py', pcb, common); print(r.stdout[-150
 import pcbnew
 b = pcbnew.LoadBoard(pcb)
 m1 = b.FindFootprintByReference('M1')
-for md in m1.Models():
-    if 'CM5_with_cooler' in md.m_Filename:
-        md.m_Filename = md.m_Filename.replace('CM5_with_cooler', 'RK3576_module_with_cooler')
+keep = [md for md in m1.Models() if 'CM5_with_cooler' not in md.m_Filename]
+m1.Models().clear()
+for md in keep: m1.Models().push_back(md)
+nm = pcbnew.FP_3DMODEL(); nm.m_Filename = '${KIPRJMOD}/lib/gen3d/RK3576_module_with_cooler.wrl'; m1.Models().push_back(nm)
 hyb = os.path.join(HERE, 'CM5-DETECT_rev03_hybrid_render.kicad_pcb')
 b.Save(hyb)
 hyb_ph = os.path.join(OUT, '_hyb_photos'); os.makedirs(hyb_ph, exist_ok=True)
 for name, args in [('top', ['--side', 'top']), ('iso_top', ['--side', 'top', '--rotate', '-35,0,25'])]:
     run('kicad-cli', 'pcb', 'render', '-o', os.path.join(hyb_ph, name + '.png'), '--width', '1400', '--height', '1800',
-        '--quality', 'high', '--background', 'opaque', '--perspective', *args, hyb)
+        '--quality', 'high', '--background', 'opaque', '--perspective', '--zoom', '0.72', *args, hyb)
 os.remove(hyb)
 
 VAR = {

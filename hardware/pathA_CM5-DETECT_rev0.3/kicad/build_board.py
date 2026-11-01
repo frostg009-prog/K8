@@ -25,27 +25,21 @@ P = {
     'U_B1': (7.0, 86.0, 0, 'F'), 'L_B1': (16.5, 86.0, 90, 'F'), 'D_B1': (7.0, 94.0, 0, 'F'), 'D_B1IN': (17.0, 96.5, 0, 'F'),
     'U_B2': (37.0, 86.0, 0, 'F'), 'L_B2': (27.5, 86.0, 90, 'F'), 'D_B2': (36.0, 94.0, 0, 'F'),
     'J_BAT': (39.6, 117.0, 180, 'F'), 'J_BAT2': (9.5, 119.0, 180, 'F'),
-    'F1': (23.5, 118.0, 90, 'F'), 'D_TVS': (23.5, 112.0, 0, 'B'), 'Q_RP': (36.0, 128.0, 0, 'B'),
+    'F1': (23.5, 118.0, 90, 'F'), 'D_TVS': (16.5, 112.5, 0, 'B'), 'Q_RP': (36.0, 128.0, 0, 'B'),
     'C_BULK': (24.0, 128.0, 0, 'B'),
     # bottom side
-    'J_SD': (9.3, 22.3, 90, 'B'),
-    'J_S1': (40.6, 14.0, 270, 'B'), 'J_S2': (40.6, 22.6, 270, 'B'), 'J_S3': (40.6, 57.4, 270, 'B'), 'J_S4': (40.6, 65.6, 270, 'B'),
-    'J_SPWR': (40.6, 89.0, 270, 'B'),
-    'J_MATEK': (3.4, 61.0, 90, 'B'), 'J_GPS': (3.4, 113.8, 90, 'B'), 'J_I2C': (3.4, 123.6, 90, 'B'),
-    'J_IO': (3.4, 91.0, 90, 'B'), 'J_THU': (3.4, 103.3, 90, 'B'),
-    'J_THA': (22.0, 103.0, 0, 'B'), 'J_FAN': (40.6, 98.5, 270, 'B'), 'J_AIPWR': (40.6, 108.0, 270, 'B'),
-    'SC1': (15.6, 70.5, 90, 'B'), 'SC2': (27.6, 70.5, 90, 'B'),
-    'L_HB': (21.0, 79.0, 0, 'B'), 'U_HB': (28.0, 76.5, 0, 'B'), 'U_CHG': (33.5, 84.5, 0, 'B'), 'D_CHG': (27.5, 84.5, 0, 'B'),
-    'U_MCU': (22.0, 22.0, 0, 'B'), 'U_TEMP': (27.5, 13.5, 0, 'B'),
-    'U_C33': (34.5, 11.5, 0, 'B'), 'L_C33': (34.5, 16.5, 0, 'B'),
-    'U_AON': (17.0, 13.0, 0, 'B'), 'U_SD': (12.0, 36.0, 0, 'B'),
+    'J_SD': (9.3, 26.6, 90, 'B'),
+    'J_S1': (40.6, 22.4, 270, 'B'), 'J_S2': (40.6, 31.6, 270, 'B'), 'J_S3': (40.6, 57.5, 270, 'B'), 'J_S4': (40.6, 89.0, 270, 'B'),
+    'J_SPWR': (40.6, 98.5, 270, 'B'),
+    'J_MATEK': (3.4, 57.5, 90, 'B'), 'J_GPS': (3.4, 89.0, 90, 'B'), 'J_I2C': (3.4, 99.0, 90, 'B'),
+    'J_IO': (3.4, 112.0, 90, 'B'), 'J_THU': (3.4, 125.5, 90, 'B'),
+    'J_THA': (22.0, 103.0, 0, 'B'), 'J_FAN': (40.6, 108.0, 270, 'B'), 'J_AIPWR': (30.0, 110.5, 0, 'B'),
+    'SC1': (16.0, 69.6, 90, 'B'), 'SC2': (28.0, 69.6, 90, 'B'), 'L_HB': (19.0, 76.5, 0, 'B'), 'U_HB': (25.5, 75.5, 0, 'B'), 'U_CHG': (30.5, 76.5, 0, 'B'), 'D_CHG': (29.0, 80.8, 0, 'B'), 'U_MCU': (20.0, 38.0, 0, 'B'), 'U_TEMP': (30.0, 37.0, 0, 'B'), 'U_C33': (31.0, 11.0, 0, 'B'), 'L_C33': (31.5, 16.5, 0, 'B'),
+    'U_AON': (17.0, 11.5, 0, 'B'), 'U_SD': (20.0, 27.0, 0, 'B'),
     'U_ESD1': (9.0, 76.0, 0, 'B'), 'U_ID1': (12.5, 79.5, 0, 'B'), 'U_ID2': (12.5, 83.0, 0, 'B'),
     'U_ESD2': (34.8, 79.4, 0, 'B'), 'U_VB2': (31.0, 89.0, 0, 'B'),
     'U_ESD3': (9.0, 98.0, 0, 'B'), 'U_VB3': (13.5, 99.0, 0, 'B'), 'U_VB4': (34.5, 96.0, 0, 'B'),
-    'Q_PMIC': (19.0, 31.0, 0, 'B'), 'Q_PWB': (23.5, 31.0, 0, 'B'),
-    'JP_WDT': (27.0, 27.5, 0, 'B'), 'JP_MATEK': (8.0, 61.0, 90, 'B'), 'JP_SERVO': (35.5, 89.0, 90, 'B'),
-    'TP_SWIO': (17.0, 39.0, 0, 'B'), 'TP_3V3': (19.5, 39.0, 0, 'B'), 'TP_GND': (22.0, 39.0, 0, 'B'), 'TP_RST': (24.5, 39.0, 0, 'B'),
-    'TP_5V': (27.0, 39.0, 0, 'B'), 'TP_5VA': (29.5, 39.0, 0, 'B'),
+    'Q_PMIC': (14.0, 39.5, 0, 'B'), 'Q_PWB': (14.0, 43.5, 0, 'B'), 'JP_WDT': (24.0, 31.5, 0, 'B'), 'JP_MATEK': (8.5, 57.5, 90, 'B'), 'JP_SERVO': (34.5, 102.5, 90, 'B'),
     'H1': (2.0, 81.6, 0, 'F'), 'H2': (42.0, 81.6, 0, 'F'), 'H3': (2.0, 10.6, 0, 'F'), 'H4': (42.0, 10.6, 0, 'F'),
 }
 # top side area under the CM5 module is reserved (module sits 1.5 mm above the board)
@@ -118,6 +112,16 @@ def main(out):
             occ[side].append(bb)
             if th:
                 occ['B' if side == 'F' else 'F'].append([bb[0] + 0.0, bb[1], bb[2], bb[3]] if ref.startswith(('SC', 'J_BAT')) else bb)
+    for r in ('SC1', 'SC2'):
+        fp = placed[r]; bb = bbox(fp)
+        if bb[3] > P[r][1] + 3:          # body points down -> turn it round
+            fp.SetOrientationDegrees(P[r][2] + 180); bb = bbox(fp)
+        occ['B'].append(bb)
+    for fp in placed.values():
+        for pd in fp.Pads():
+            if pd.GetAttribute() == pcbnew.PAD_ATTRIB_NPTH and pd.GetDrillSizeX() > FM(1.5):
+                x, y, r = pcbnew.ToMM(pd.GetPosition().x), pcbnew.ToMM(pd.GetPosition().y), (3.0 if pd.GetDrillSizeX() >= FM(2.5) else pcbnew.ToMM(pd.GetDrillSizeX()) / 2 + 0.4)
+                occ['F'].append([x - r, y - r, x + r, y + r]); occ['B'].append([x - r, y - r, x + r, y + r])
     occ['F'].append(list(CM5_KEEP))
     occ['B'].append([0.5, 30.0, 10.5, 56.0]); occ['B'].append([33.5, 30.0, 43.5, 56.0])
     # ---- auto place small parts near the IC/connector they connect to
@@ -145,7 +149,7 @@ def main(out):
         ax, ay, _, aside = P[a]
         side = aside
         if a == 'M1':                       # CM5 support parts go underneath on the bottom
-            side = 'B'; ax, ay = 22.0, 40.0
+            side = 'B'; ax, ay = 22.0, 60.0
         if a in ('J_CAM1', 'J_CAM2'):
             side = 'B'; ay = 11.0
         if side == 'F' and CM5_KEEP[1] < ay < CM5_KEEP[3]:
@@ -174,6 +178,32 @@ def main(out):
         for pad in fp.Pads():
             if pad.GetAttribute() == pcbnew.PAD_ATTRIB_PTH and pad.GetNumber() == '' and pad.GetSizeX() <= pad.GetDrillSizeX() + FM(0.15):
                 pad.SetAttribute(pcbnew.PAD_ATTRIB_NPTH); pad.SetLayerSet(pad.UnplatedHoleMask())
+    # ---- silkscreen: only references of ICs/connectors + human labels; values on fab layer
+    LABEL = {'J_CAM1': 'CAM1 (day)', 'J_CAM2': 'CAM2 (night)', 'J_PCIE': 'AI / Hailo PCIe', 'J_USB1': 'USB-C PC/FW', 'J_USB2': 'USB-C HOST',
+             'J_BAT': 'BAT 3-6S XT60', 'J_BAT2': 'XT30 alt', 'J_SD': 'microSD', 'J_S1': 'SERVO1', 'J_S2': 'SERVO2', 'J_S3': 'SERVO3', 'J_S4': 'SERVO4',
+             'J_SPWR': 'SERVO PWR (BEC)', 'J_MATEK': 'MATEK UART0', 'J_GPS': 'GPS UART2', 'J_I2C': 'I2C', 'J_IO': 'GPIO', 'J_THU': 'THERMAL USB',
+             'J_THA': 'THERMAL AUX', 'J_FAN': 'FAN 5V', 'J_AIPWR': 'AI 5V', 'J_RTC': 'RTC BAT', 'SW_BOOT': 'BOOT', 'SW_PWR': 'POWER',
+             'D_PWR': 'PWR', 'D_RUN': 'RUN', 'D_ERR': 'ERR', 'JP_WDT': 'WDT OFF', 'JP_SERVO': 'SERVO=5V', 'JP_MATEK': 'MATEK 5V'}
+    for ref, fp in placed.items():
+        fp.Value().SetVisible(False)
+        for f in fp.GetFields():
+            if f.GetName() not in ('Reference', 'Value'): f.SetVisible(False)
+        rt = fp.Reference(); rt.SetTextSize(V(0.8, 0.8)); rt.SetTextThickness(FM(0.15))
+        if re.match(r'^(R|C|L_|D_|Q_|U_ESD|U_ID|TP_|H)\d*', ref) and ref not in LABEL:
+            rt.SetVisible(False)
+        if ref in LABEL:
+            rt.SetText(LABEL[ref] if not ref.startswith('D_') else LABEL[ref]); rt.SetVisible(True)
+    # ---- 3D models for parts without vendor models
+    G3 = HERE + '/lib/gen3d/'
+    MODELS = {'M1': ('CM5_with_cooler', (0, 0, 0)), 'J_USB1': ('USB_C_receptacle', (0, -0.5, 0)), 'J_USB2': ('USB_C_receptacle', (0, -0.5, 0)),
+              'L_B1': ('Inductor_7x6', (0, 0, 0)), 'L_B2': ('Inductor_7x6', (0, 0, 0)), 'U_B1': ('SOP8_EP', (0, 0, 0)), 'U_B2': ('SOP8_EP', (0, 0, 0)),
+              'SC1': ('SuperCap_D10_L20', (0, 0, 0)), 'SC2': ('SuperCap_D10_L20', (0, 0, 0)), 'F1': ('Fuse_2410', (0, 0, 0))}
+    for ref, (m, off) in MODELS.items():
+        fp = placed[ref]
+        if ref != 'M1':
+            fp.Models().clear()
+        md = pcbnew.FP_3DMODEL(); md.m_Filename = '${KIPRJMOD}/lib/gen3d/%s.wrl' % m; md.m_Offset = pcbnew.VECTOR3D(*off)
+        fp.Models().push_back(md)
     # ---- nets
     for ref, c in C.items():
         fp = placed[ref]

@@ -17,7 +17,7 @@ lib.astar.argtypes = [ctypes.c_int, ctypes.c_int, P8, P8, P8, P8, P8, ctypes.c_i
 lib.astar.restype = ctypes.c_int
 
 G = 0.1
-SAFE = 0.07
+SAFE = 0.035
 VIA_R = 0.225
 D = json.load(open(sys.argv[1] if len(sys.argv) > 1 else HERE + '/board.json'))
 W, L = D['W'], D['L']
@@ -123,7 +123,9 @@ def width_of(n, try_i=0):
     w = c['w']
     if try_i == 1: w = min(w, 0.4)
     if try_i == 2: w = min(w, 0.2)
-    if try_i == 3: w = 0.13
+    if try_i == 3:
+        hs = c['cls'].startswith('DIFF')
+        return (0.13, 0.125) if hs else (0.1, 0.1)
     return max(w, 0.13), max(c['clr'], 0.125)
 
 
@@ -159,7 +161,72 @@ def route_conn(nid, n, w, clr, start, goal, win, viaok_extra=None, pen=None, all
         jj, ii = divmod(r, W_)
         path.append((l, jj + j0, ii + i0))
     end_via = goal_via is not None and not goal[path[-1]]
+    path = smooth(path, fr, j0, i0)
     return path, end_via
+
+
+def octi(a, b, diag_first):
+    (j, i), (j2, i2) = (int(a[0]), int(a[1])), (int(b[0]), int(b[1]))
+    dj, di = j2 - j, i2 - i
+    dj, di = int(dj), int(di)
+    sj, si = int(dj > 0) - int(dj < 0), int(di > 0) - int(di < 0)
+    d = min(abs(dj), abs(di))
+    out = []
+    if diag_first:
+        for k in range(1, d + 1): out.append((j + sj * k, i + si * k))
+        cj, ci = j + sj * d, i + si * d
+        for k in range(1, max(abs(j2 - cj), abs(i2 - ci)) + 1): out.append((cj + sj * k * (abs(dj) > d), ci + si * k * (abs(di) > d)))
+    else:
+        rj, ri = abs(dj) - d, abs(di) - d
+        for k in range(1, max(rj, ri) + 1): out.append((j + sj * k * (rj > 0), i + si * k * (ri > 0)))
+        cj, ci = out[-1] if out else (j, i)
+        for k in range(1, d + 1): out.append((cj + sj * k, ci + si * k))
+    return out
+
+
+def seg_free(fr, l, j0, i0, a, cells):
+    pj, pi = a
+    for (j, i) in cells:
+        if not fr[l, j - j0, i - i0]: return False
+        if j != pj and i != pi and not (fr[l, pj - j0, i - i0] and fr[l, j - j0, pi - i0]): return False
+        pj, pi = j, i
+    return True
+
+
+def smooth(path, fr, j0, i0):
+    """replace grid staircases by 0/45/90 degree segments where the corridor is free"""
+    out = []
+    k = 0
+    runs = []
+    cur = [path[0]]
+    for c in path[1:]:
+        if c[0] != cur[-1][0]:
+            runs.append(cur); cur = [c]
+        else:
+            cur.append(c)
+    runs.append(cur)
+    for run in runs:
+        l = run[0][0]
+        pts = [(c[1], c[2]) for c in run]
+        if len(pts) < 3:
+            out += run; continue
+        # candidate breakpoints = direction changes
+        br = [0] + [m for m in range(1, len(pts) - 1)
+                    if (pts[m][0] - pts[m - 1][0], pts[m][1] - pts[m - 1][1]) != (pts[m + 1][0] - pts[m][0], pts[m + 1][1] - pts[m][1])] + [len(pts) - 1]
+        res = [pts[0]]
+        a = 0
+        while a < len(br) - 1:
+            done = False
+            for b in range(len(br) - 1, a, -1):
+                for df in (True, False):
+                    cells = octi(pts[br[a]], pts[br[b]], df)
+                    if cells and seg_free(fr, l, j0, i0, pts[br[a]], cells):
+                        res += cells; a = b; done = True; break
+                if done: break
+            if not done:
+                res += pts[br[a] + 1:br[a + 1] + 1]; a += 1
+        out += [(l, j, i) for (j, i) in res]
+    return out
 
 
 def commit(nid, n, w, path, end_via=False):
@@ -341,25 +408,37 @@ status = {}
 for n in order:
     status[n] = run(n)
     print(('OK  ' if status[n] else 'FAIL') + ' %-16s %.0fs' % (n, time.time() - t0), flush=True)
-# rip-up and reroute: failed net first, then the nets it displaced
-for it in range(4):
+# rip-up and reroute with rollback: accept only if total failures go down
+import copy
+json.dump(dict(tracks=[(n, l, [(a[2] + .5) * G, (a[1] + .5) * G], [(b[2] + .5) * G, (b[1] + .5) * G], w) for n, l, a, b, w in tracks],
+               vias=vias, failed=failed), open(HERE + '/routes_p0.json', 'w'))
+for it in range(3):
     bad = [n for n in order if not status[n]]
     print('pass', it, 'failed', len(bad), flush=True)
     if not bad: break
     for n in bad:
+        if status[n]: continue
+        snap = (owner.copy(), list(tracks), list(vias), copy.deepcopy(COMMITTED), dict(status), list(failed))
         ps = PADS[n]
-        x0 = min(p['x'] for p in ps) - 2; x1 = max(p['x'] for p in ps) + 2
-        y0 = min(p['y'] for p in ps) - 2; y1 = max(p['y'] for p in ps) + 2
-        j0, j1, i0, i1 = int(y0 / G), int(y1 / G), int(x0 / G), int(x1 / G)
-        sub = owner[:, max(j0, 0):j1, max(i0, 0):i1]
-        victims = [nets[k - 1] for k in np.unique(sub) if k > 0 and nets[k - 1] in status and nets[k - 1] != n
-                   and status[nets[k - 1]] and nets[k - 1] not in hs[:0]]
-        victims = [v for v in victims if v not in PLANE][:12]
+        x0 = min(p['x'] for p in ps) - 1.5; x1 = max(p['x'] for p in ps) + 1.5
+        y0 = min(p['y'] for p in ps) - 1.5; y1 = max(p['y'] for p in ps) + 1.5
+        sub = owner[:, max(int(y0 / G), 0):int(y1 / G), max(int(x0 / G), 0):int(x1 / G)]
+        cnt = {}
+        for k in np.unique(sub):
+            if k > 0 and nets[k - 1] in status and nets[k - 1] != n and status[nets[k - 1]] and nets[k - 1] not in PLANE:
+                cnt[nets[k - 1]] = int((sub == k).sum())
+        victims = sorted(cnt, key=lambda v: -cnt[v])[:4]
+        nbad0 = sum(1 for v in status.values() if not v)
         ripup(n)
         for v in victims: ripup(v)
         status[n] = run(n)
-        for v in victims:
-            status[v] = run(v)
+        for v in victims: status[v] = run(v)
+        nbad1 = sum(1 for v in status.values() if not v)
+        if nbad1 >= nbad0:   # rollback
+            owner[:] = snap[0]; tracks[:] = snap[1]; vias[:] = snap[2]; COMMITTED.clear(); COMMITTED.update(snap[3])
+            status.clear(); status.update(snap[4]); failed[:] = snap[5]
+        else:
+            print('  improved via', n, nbad0, '->', nbad1, flush=True)
 # planes last: fanout vias from SMD pads, then the remaining plane connections
 for n in ['+5V_CM5', '+5V_AUX', 'VIN_PROT', 'GND']:
     if n in PLANE:

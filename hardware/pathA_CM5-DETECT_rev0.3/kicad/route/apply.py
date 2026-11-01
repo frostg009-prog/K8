@@ -28,6 +28,43 @@ for layer in (pcbnew.F_Cu, pcbnew.B_Cu):
     for x, y in [(0.3, 0.3), (W - 0.3, 0.3), (W - 0.3, L - 0.3), (0.3, L - 0.3)]:
         ol.Append(FM(x), FM(y))
     b.Add(z)
+# power copper pours: SW nodes and high-current nets get solid copper islands on their pad layer
+POUR = ['B1_SW', 'B2_SW', 'HB_SW', 'VIN_B1', 'VIN_PROT', '+5V_CM5', '+5V_AUX', 'VBAT_RAW', 'VBAT_F', 'VSCAP']
+def hull(pts):
+    pts = sorted(set(pts))
+    if len(pts) < 3: return pts
+    def cr(o, a, b): return (a[0]-o[0])*(b[1]-o[1]) - (a[1]-o[1])*(b[0]-o[0])
+    lo, up = [], []
+    for p in pts:
+        while len(lo) >= 2 and cr(lo[-2], lo[-1], p) <= 0: lo.pop()
+        lo.append(p)
+    for p in reversed(pts):
+        while len(up) >= 2 and cr(up[-2], up[-1], p) <= 0: up.pop()
+        up.append(p)
+    return lo[:-1] + up[:-1]
+TM = pcbnew.ToMM
+for netname in POUR:
+    for layer in (pcbnew.F_Cu, pcbnew.B_Cu):
+        pads = [p for fp in b.GetFootprints() for p in fp.Pads() if p.GetNetname() == netname and p.IsOnLayer(layer) and p.GetAttribute() != pcbnew.PAD_ATTRIB_PTH]
+        clusters = []
+        for p in pads:
+            c = (TM(p.GetPosition().x), TM(p.GetPosition().y))
+            for cl in clusters:
+                if any(abs(c[0]-q[0]) < 9 and abs(c[1]-q[1]) < 9 for q, _ in cl): cl.append((c, p)); break
+            else: clusters.append([(c, p)])
+        for cl in clusters:
+            if len(cl) < 2: continue
+            pts = []
+            for _, p in cl:
+                bb = p.GetBoundingBox(); m = 0.5
+                pts += [(TM(bb.GetX())-m, TM(bb.GetY())-m), (TM(bb.GetRight())+m, TM(bb.GetY())-m), (TM(bb.GetRight())+m, TM(bb.GetBottom())+m), (TM(bb.GetX())-m, TM(bb.GetBottom())+m)]
+            h = hull(pts)
+            z = pcbnew.ZONE(b); z.SetLayer(layer); z.SetNet(b.FindNet(netname)); z.SetAssignedPriority(3)
+            z.SetLocalClearance(FM(0.2)); z.SetMinThickness(FM(0.25)); z.SetPadConnection(pcbnew.ZONE_CONNECTION_FULL)
+            z.SetIslandRemovalMode(pcbnew.ISLAND_REMOVAL_MODE_ALWAYS)
+            ol = z.Outline(); ol.NewOutline()
+            for x, y in h: ol.Append(FM(x), FM(y))
+            b.Add(z)
 for z in b.Zones():
     if z.GetLayer() in (pcbnew.In1_Cu, pcbnew.In2_Cu):
         z.SetIslandRemovalMode(pcbnew.ISLAND_REMOVAL_MODE_ALWAYS)

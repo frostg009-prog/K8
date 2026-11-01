@@ -138,7 +138,7 @@ def astar_route(net, sm, gm):
     cls = B.GetDesignSettings().m_NetSettings.GetEffectiveNetClass(net)
     base_w = TM(cls.GetTrackWidth())
     js = np.concatenate([np.nonzero(sm.any(0))[0], np.nonzero(gm.any(0))[0]]); is_ = np.concatenate([np.nonzero(sm.any(0))[1], np.nonzero(gm.any(0))[1]])
-    for w, clr in ((min(base_w, 0.25), 0.15), (0.15, 0.13), (0.12, 0.11)):
+    for w, clr in ((min(base_w, 0.25), 0.2), (0.15, 0.2), (0.15, 0.15)):
         for margin in (3.0, 10.0, 80.0):
             k = int(margin / G)
             i0, i1 = max(is_.min() - k, 0), min(is_.max() + k + 1, NX); j0, j1 = max(js.min() - k, 0), min(js.max() + k + 1, NY)

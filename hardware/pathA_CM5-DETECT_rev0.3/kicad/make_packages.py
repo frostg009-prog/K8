@@ -57,6 +57,7 @@ for name, v in VAR.items():
     os.makedirs(os.path.join(d, '03_Functionality'))
     for f in ('FUNCTIONALITY.md', 'FAB_NOTES.md'):
         shutil.copy(os.path.join(ROOT, 'docs', f), os.path.join(d, '03_Functionality', f))
+    shutil.copy(os.path.join(ROOT, 'docs', 'REZONIT_blank_zakaza_CM5-DETECT_rev0.3_filled.xlsx'), os.path.join(d, '03_Functionality', 'REZONIT_blank_zakaza_CM5-DETECT_rev0.3_filled.xlsx'))
     for f in ('VARIANTS.md', 'COST.md'):
         shutil.copy(os.path.join(ROOT, '..', f), os.path.join(d, '03_Functionality', f))
     shutil.copytree(os.path.join(ROOT, 'firmware'), os.path.join(d, '03_Functionality', 'firmware'))

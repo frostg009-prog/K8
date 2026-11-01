@@ -7,3 +7,4 @@ route/board.dsn
 .price_cache.json
 route/fr.log
 route/*.ses
+hardware/packages/

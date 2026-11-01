@@ -289,6 +289,11 @@ add('U_TEMP', 'Package_SO:SOIC-8_3.9x4.9mm_P1.27mm', 'NST175H temp sensor 0x48',
 Cap('100nF', '+3V3_AON')
 R('2.2k', 'I2C1_SDA', '+3V3_CM5'); R('2.2k', 'I2C1_SCL', '+3V3_CM5')
 
+# secure element: device keys / disk encryption key (LUKS), BirdWatch licence binding. I2C1 @0x60
+add('U_SEC', 'Package_SO:SOIC-8_3.9x4.9mm_P1.27mm', 'ATECC608B secure element (I2C 0x60)', 'C1518769',
+    {1: '', 2: '', 3: '', 4: 'GND', 5: 'I2C1_SDA', 6: 'I2C1_SCL', 7: '', 8: '+3V3_CM5'})
+Cap('100nF', '+3V3_CM5')
+
 # LEDs: PWR (green, always-on), RUN (blue, CM5 GPIO20 low = on), ERR (red, MCU)
 add('D_PWR', LED, 'LED green PWR', 'C12624', {1: 'LEDP_K', 2: '+3V3_AON'}); R('1k', 'LEDP_K', 'GND')
 add('D_RUN', LED, 'LED blue RUN', 'C2288', {1: 'LEDR_K', 2: '+3V3_CM5'}); R('220R', 'LEDR_K', 'LED_RUN_N')

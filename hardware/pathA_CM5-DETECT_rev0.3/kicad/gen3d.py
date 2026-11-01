@@ -38,3 +38,11 @@ write('FFC_16', [box(0, 0, 0, 14, 5.0, 2.0, (0.9, 0.9, 0.85)), box(0, -1.5, 2.0,
 write('TF_card', [box(0, 0, 0, 14.5, 15.0, 1.85, METAL, 0.8)])
 write('Fuse_2410', [box(0, 0, 0, 6.1, 2.6, 2.6, (0.95, 0.95, 0.9))])
 print('models in', OUT)
+# RK3576 CM5-format module (Radxa CM4 / ArmSoM CM5 style): dark blue PCB, SoC, LPDDR, eMMC, smaller cooler
+BLUE = (0.05, 0.12, 0.35)
+rk = [box(16.5, 24, 1.5, 40, 55, 1.0, BLUE), box(16.5, 30, 2.5, 14, 14, 1.2, (0.15, 0.15, 0.17)),
+      box(9.0, 14, 2.5, 10, 12, 1.0, BLACK), box(24.0, 14, 2.5, 10, 12, 1.0, BLACK), box(16.5, 44, 2.5, 11.5, 13, 1.0, BLACK),
+      box(16.5, 30, 3.7, 30, 30, 2.0, (0.15, 0.15, 0.16))]
+for k in range(9):
+    rk.append(box(16.5 - 14 + 1.5 + k * 3.2, 30, 5.7, 1.2, 30, 7.0, (0.15, 0.15, 0.16)))
+write('RK3576_module_with_cooler', rk)

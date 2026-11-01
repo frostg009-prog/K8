@@ -17,7 +17,8 @@ lib.astar.argtypes = [ctypes.c_int, ctypes.c_int, P8, P8, P8, P8, P8, ctypes.c_i
 lib.astar.restype = ctypes.c_int
 
 G = 0.1
-SAFE = 0.035
+SAFE = 0.03
+EXP = 0.05   # conservative rasterisation: copper cells cover every cell the copper touches
 VIA_R = 0.225
 D = json.load(open(sys.argv[1] if len(sys.argv) > 1 else HERE + '/board.json'))
 W, L = D['W'], D['L']
@@ -43,6 +44,7 @@ def cells_rect(x0, y0, x1, y1):
 padcells = []   # (netid, layer, mask-slices)
 for p in D['pads']:
     x0, y0, x1, y1 = p['bb']
+    x0, y0, x1, y1 = x0 - EXP, y0 - EXP, x1 + EXP, y1 + EXP
     if 'HOLE' in p['layers']:
         r = p['drill'] / 2 + 0.2
         J, I = np.ogrid[:NY, :NX]
@@ -58,7 +60,7 @@ for p in D['pads']:
         sub = owner[l, j0:j1 + 1, i0:i1 + 1]
         if p['round']:
             yy, xx = np.meshgrid(ys[j0:j1 + 1], xs[i0:i1 + 1], indexing='ij')
-            m = (xx - p['x']) ** 2 + (yy - p['y']) ** 2 <= (p['w'] / 2) ** 2
+            m = (xx - p['x']) ** 2 + (yy - p['y']) ** 2 <= (p['w'] / 2 + EXP) ** 2
             sub[m] = nid
         else:
             sub[:] = nid
@@ -97,6 +99,7 @@ for n in PLANE:
 disc = {}
 COMMITTED = {}
 PADSTAMP = owner.copy()
+VIAS = np.zeros((NY, NX), bool)
 
 
 def stamp(l, j, i, r, nid):
@@ -135,15 +138,17 @@ def route_conn(nid, n, w, clr, start, goal, win, viaok_extra=None, pen=None, all
     ow = owner[sl]
     obst = (ow != 0) & (ow != nid)
     dist = np.stack([ndimage.distance_transform_edt(~obst[l]) for l in (0, 1)]) * G
-    free = (dist >= clr + w / 2 + SAFE) | (ow == nid)
+    own_pad = PADSTAMP[sl] == nid
+    free = (dist >= clr + w / 2 + SAFE) | own_pad | ((ow == nid) & (dist >= clr + w / 2 + SAFE - 0.0))
+    vd = ndimage.distance_transform_edt(~VIAS[j0:j1, i0:i1]) * G
     vr = clr + VIA_R + SAFE
-    viaok = (dist[0] >= vr) & (dist[1] >= vr) & (ow[0] != -1) & (ow[1] != -1)
+    viaok = (dist[0] >= vr) & (dist[1] >= vr) & (ow[0] != -1) & (ow[1] != -1) & (vd >= 0.65)
     if not allow_via:
         viaok[:] = False
     st = np.ascontiguousarray(start[sl], np.uint8)
     go = np.ascontiguousarray(goal[sl], np.uint8)
     if goal_via is not None:   # goal also = plane cells where a via may be dropped
-        gv = goal_via[j0:j1, i0:i1] & (dist[0] >= vr) & (dist[1] >= vr) & (ow[0] != -1) & (ow[1] != -1)
+        gv = goal_via[j0:j1, i0:i1] & (dist[0] >= vr) & (dist[1] >= vr) & (ow[0] != -1) & (ow[1] != -1) & (vd >= 0.65)
         go = np.ascontiguousarray(go | np.stack([gv & free[0], gv & free[1]]), np.uint8)
     if not st.any() or not go.any():
         return None
@@ -233,13 +238,13 @@ def commit(nid, n, w, path, end_via=False):
     seg = []
     COMMITTED.setdefault(n, []).append((w, path, end_via))
     for k, (l, j, i) in enumerate(path):
-        stamp(l, j, i, w / 2, nid)
+        stamp(l, j, i, w / 2 + EXP, nid)
         if k and path[k - 1][0] != l:
             vias.append((n, (i + 0.5) * G, (j + 0.5) * G))
-            stamp(0, j, i, VIA_R, nid); stamp(1, j, i, VIA_R, nid)
+            stamp(0, j, i, VIA_R + EXP, nid); stamp(1, j, i, VIA_R + EXP, nid); VIAS[j, i] = True
     if end_via:
         l, j, i = path[-1]
-        vias.append((n, (i + 0.5) * G, (j + 0.5) * G)); stamp(0, j, i, VIA_R, nid); stamp(1, j, i, VIA_R, nid)
+        vias.append((n, (i + 0.5) * G, (j + 0.5) * G)); stamp(0, j, i, VIA_R + EXP, nid); stamp(1, j, i, VIA_R + EXP, nid); VIAS[j, i] = True
     # compress into segments
     cur = [path[0]]
     for a in path[1:]:
@@ -256,8 +261,14 @@ def commit(nid, n, w, path, end_via=False):
         tracks.append((n, 'FB'[cur[0][0]], cur[0], cur[-1], w))
 
 
+FANOUT = {}   # (ref, num) -> bool mask of the fanout copper (stub + via)
+
+
 def pad_mask(p, nid):
     m = np.zeros((2, NY, NX), bool)
+    fo = FANOUT.get((p['ref'], p['num']))
+    if fo is not None:
+        m |= fo
     j0, j1, i0, i1 = p['cells']
     for lname in p['layers']:
         l = LI[lname]
@@ -286,8 +297,8 @@ def plane_fanout(n):
     """drop vias from every SMD pad of a plane net to its inner plane"""
     nid = NID[n]; ok = 0; bad = 0
     for p in PADS.get(n, []):
-        if len(p['layers']) == 2:
-            continue   # PTH reaches the plane itself
+        if len(p['layers']) == 2 or (p['ref'], p['num']) in FANOUT:
+            continue   # PTH reaches the plane itself / already has a via
         pm = pad_mask(p, nid)
         if not pm.any():
             continue
@@ -305,6 +316,9 @@ def plane_fanout(n):
             if r is None:
                 bad += 1; break
             commit(nid, n, w, r[0], end_via=True); ok += 1
+            fo = np.zeros((2, NY, NX), bool)
+            for c in r[0]: fo[c] = True
+            FANOUT[(p['ref'], p['num'])] = fo
     return ok, bad
 
 
@@ -314,7 +328,7 @@ def route_net(n, pen=None):
     plane = PLANE.get(n)
     if plane is not None:   # only pads not already tied to the plane
         ps = [p for p in ps if not (len(p['layers']) == 2 and plane[p['cells'][0]:p['cells'][1] + 1, p['cells'][2]:p['cells'][3] + 1].any())]
-        ps = [p for p in ps if not any(v[0] == n and abs(v[1] - p['x']) < 3.5 and abs(v[2] - p['y']) < 3.5 for v in vias)]
+        ps = [p for p in ps if (p['ref'], p['num']) not in FANOUT]
         if not ps:
             return True
     if len(ps) < 2 and plane is None:
@@ -369,12 +383,65 @@ def ripup(n):
     COMMITTED.pop(n, None)
     tracks[:] = [t for t in tracks if t[0] != n]
     vias[:] = [v for v in vias if v[0] != n]
+    VIAS[:] = False
+    for v in vias: VIAS[int(v[2] / G), int(v[1] / G)] = True
 
 def recommit(n):
     for w, path, ev in COMMITTED.get(n, []):
         pass
 
 t0 = time.time()
+
+
+def cm5_fanout():
+    """structured escape of CM5 board-to-board pins: stub along the pad + staggered via (3 columns)"""
+    m1 = [p for p in D['pads'] if p['ref'] == 'M1' and p.get('nid', 0) > 0]
+    hsn = set(n for n in nets if n.startswith(('CAM1_D', 'CAM1_C', 'CAM2_D', 'CAM2_C', 'PCIE_CLK', 'PCIE_RX', 'PCIE_TX', 'USB')))
+    xs_ = sorted(set(round(p['x'], 2) for p in m1))
+    ok = bad = 0
+    for p in m1:
+        n = p['net']
+        if n in hsn:
+            continue
+        x = round(p['x'], 2)
+        # rows: x ~ 3.46 (GPIO outer) 6.54 (GPIO inner) 37.46 (HS inner) 40.54 (HS outer)
+        dirx = -1 if x < 5 else (1 if x < 20 else (-1 if x < 39 else 1))
+        k = int(round((p['y'] - 20) / 0.4))
+        placed_ = False
+        for col in [k % 3, (k + 1) % 3, (k + 2) % 3]:
+            d = 0.95 + 0.65 * col
+            vx, vy = p['x'] + dirx * d, p['y']
+            i, j = int(vx / G), int(vy / G)
+            nid = NID[n]
+            # check legality with 0.1 mm track / 0.1 mm clearance in this dense zone
+            win = (max(j - 15, 0), min(j + 15, NY), max(min(i, int(p['x'] / G)) - 15, 0), min(max(i, int(p['x'] / G)) + 15, NX))
+            sl = (slice(None), slice(win[0], win[1]), slice(win[2], win[3]))
+            ow = owner[sl]
+            obst = (ow != 0) & (ow != nid)
+            dist = np.stack([ndimage.distance_transform_edt(~obst[l]) for l in (0, 1)]) * G
+            vd = ndimage.distance_transform_edt(~VIAS[win[0]:win[1], win[2]:win[3]]) * G
+            jj, ii = j - win[0], i - win[2]
+            if not (0 <= jj < dist.shape[1] and 0 <= ii < dist.shape[2]): continue
+            if ow[0, jj, ii] == -1 or ow[1, jj, ii] == -1: continue
+            if dist[0, jj, ii] < 0.1 + VIA_R + 0.08 or dist[1, jj, ii] < 0.1 + VIA_R + 0.08 or vd[jj, ii] < 0.65: continue
+            # stub cells from pad centre to via on F.Cu
+            pi = int(p['x'] / G)
+            cells = [(0, j, c) for c in (range(pi, i + 1) if i >= pi else range(pi, i - 1, -1))]
+            if any(dist[0, jj, c - win[2]] < 0.1 + 0.05 + 0.05 and PADSTAMP[0, j, c] != nid for (_, _, c) in cells): continue
+            path = cells + [(1, j, i)]
+            before = len(tracks)
+            commit(nid, n, 0.1, path)
+            fo = np.zeros((2, NY, NX), bool)
+            for (l, jj2, ii2) in path: fo[l, jj2, ii2] = True
+            fo[0, j, i] = fo[1, j, i] = True
+            FANOUT[(p['ref'], p['num'])] = fo
+            placed_ = True; ok += 1
+            break
+        if not placed_: bad += 1
+    return ok, bad
+
+
+print('cm5 fanout', cm5_fanout(), flush=True)
 pairs = [n for n in nets if n.endswith('_P') or n.endswith('_DP')]
 hs = []
 for p in sorted(pairs):
@@ -435,7 +502,9 @@ for it in range(3):
         for v in victims: status[v] = run(v)
         nbad1 = sum(1 for v in status.values() if not v)
         if nbad1 >= nbad0:   # rollback
-            owner[:] = snap[0]; tracks[:] = snap[1]; vias[:] = snap[2]; COMMITTED.clear(); COMMITTED.update(snap[3])
+            owner[:] = snap[0]; tracks[:] = snap[1]; vias[:] = snap[2]; VIAS[:] = False
+            for v in vias: VIAS[int(v[2] / G), int(v[1] / G)] = True
+            COMMITTED.clear(); COMMITTED.update(snap[3])
             status.clear(); status.update(snap[4]); failed[:] = snap[5]
         else:
             print('  improved via', n, nbad0, '->', nbad1, flush=True)

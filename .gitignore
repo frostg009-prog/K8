@@ -5,3 +5,5 @@ fp-info-cache
 route/libastar.so
 route/board.dsn
 .price_cache.json
+route/fr.log
+route/*.ses

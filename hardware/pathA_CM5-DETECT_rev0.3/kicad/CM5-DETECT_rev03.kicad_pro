@@ -230,7 +230,7 @@
     "pinned_symbol_libs": []
   },
   "meta": {
-    "filename": "CM5-DETECT_rev03.kicad_pro",
+    "filename": "CM5-DETECT_rev03_placed.kicad_pro",
     "version": 3
   },
   "net_settings": {
@@ -291,6 +291,24 @@
       },
       {
         "bus_width": 12,
+        "clearance": 0.15,
+        "diff_pair_gap": 0.25,
+        "diff_pair_via_gap": 0.25,
+        "diff_pair_width": 0.2,
+        "line_style": 0,
+        "microvia_diameter": 0.3,
+        "microvia_drill": 0.1,
+        "name": "PLANE",
+        "pcb_color": "rgba(0, 0, 0, 0.000)",
+        "priority": -1,
+        "schematic_color": "rgba(0, 0, 0, 0.000)",
+        "track_width": 0.3,
+        "via_diameter": 0.6,
+        "via_drill": 0.3,
+        "wire_width": 6
+      },
+      {
+        "bus_width": 12,
         "clearance": 0.2,
         "diff_pair_gap": 0.25,
         "diff_pair_via_gap": 0.25,
@@ -334,11 +352,75 @@
     "netclass_patterns": [
       {
         "netclass": "DIFF100",
+        "pattern": "CAM1_C_N"
+      },
+      {
+        "netclass": "DIFF100",
+        "pattern": "CAM2_D0_P"
+      },
+      {
+        "netclass": "DIFF100",
+        "pattern": "PCIE_CLKREQ_N"
+      },
+      {
+        "netclass": "DIFF100",
+        "pattern": "CAM2_D3_N"
+      },
+      {
+        "netclass": "DIFF100",
+        "pattern": "CAM2_D1_N"
+      },
+      {
+        "netclass": "DIFF100",
+        "pattern": "CAM1_C_P"
+      },
+      {
+        "netclass": "DIFF100",
+        "pattern": "CAM2_D2_N"
+      },
+      {
+        "netclass": "DIFF100",
+        "pattern": "PCIE_CLK_P"
+      },
+      {
+        "netclass": "DIFF100",
+        "pattern": "PCIE_RX_N"
+      },
+      {
+        "netclass": "DIFF100",
+        "pattern": "CAM2_D1_P"
+      },
+      {
+        "netclass": "DIFF100",
         "pattern": "CAM2_D3_P"
       },
       {
         "netclass": "DIFF100",
+        "pattern": "CAM1_D3_N"
+      },
+      {
+        "netclass": "DIFF100",
+        "pattern": "PCIE_TX_N"
+      },
+      {
+        "netclass": "DIFF100",
+        "pattern": "PCIE_RX_P"
+      },
+      {
+        "netclass": "DIFF100",
+        "pattern": "CAM2_D2_P"
+      },
+      {
+        "netclass": "DIFF100",
+        "pattern": "CAM1_D0_P"
+      },
+      {
+        "netclass": "DIFF100",
         "pattern": "CAM1_D1_N"
+      },
+      {
+        "netclass": "DIFF100",
+        "pattern": "CAM1_D0_N"
       },
       {
         "netclass": "DIFF100",
@@ -350,23 +432,7 @@
       },
       {
         "netclass": "DIFF100",
-        "pattern": "PCIE_CLKREQ_N"
-      },
-      {
-        "netclass": "DIFF100",
-        "pattern": "CAM1_C_N"
-      },
-      {
-        "netclass": "DIFF100",
-        "pattern": "CAM2_D3_N"
-      },
-      {
-        "netclass": "DIFF100",
-        "pattern": "CAM1_C_P"
-      },
-      {
-        "netclass": "DIFF100",
-        "pattern": "CAM1_D1_P"
+        "pattern": "CAM2_C_P"
       },
       {
         "netclass": "DIFF100",
@@ -374,7 +440,7 @@
       },
       {
         "netclass": "DIFF100",
-        "pattern": "PCIE_RX_N"
+        "pattern": "CAM2_D0_N"
       },
       {
         "netclass": "DIFF100",
@@ -382,63 +448,15 @@
       },
       {
         "netclass": "DIFF100",
-        "pattern": "CAM2_D0_N"
-      },
-      {
-        "netclass": "DIFF100",
-        "pattern": "PCIE_CLK_P"
-      },
-      {
-        "netclass": "DIFF100",
-        "pattern": "PCIE_RX_P"
-      },
-      {
-        "netclass": "DIFF100",
-        "pattern": "PCIE_TX_N"
-      },
-      {
-        "netclass": "DIFF100",
-        "pattern": "CAM2_C_P"
-      },
-      {
-        "netclass": "DIFF100",
-        "pattern": "CAM1_D3_N"
-      },
-      {
-        "netclass": "DIFF100",
         "pattern": "CAM1_D3_P"
       },
       {
         "netclass": "DIFF100",
-        "pattern": "CAM1_D0_P"
-      },
-      {
-        "netclass": "DIFF100",
-        "pattern": "CAM2_D1_P"
-      },
-      {
-        "netclass": "DIFF100",
-        "pattern": "CAM2_D0_P"
-      },
-      {
-        "netclass": "DIFF100",
-        "pattern": "CAM2_D1_N"
-      },
-      {
-        "netclass": "DIFF100",
-        "pattern": "CAM1_D0_N"
-      },
-      {
-        "netclass": "DIFF100",
-        "pattern": "CAM2_D2_N"
-      },
-      {
-        "netclass": "DIFF100",
-        "pattern": "CAM2_D2_P"
-      },
-      {
-        "netclass": "DIFF100",
         "pattern": "PCIE_TX_P"
+      },
+      {
+        "netclass": "DIFF100",
+        "pattern": "CAM1_D1_P"
       },
       {
         "netclass": "DIFF90",
@@ -474,19 +492,7 @@
       },
       {
         "netclass": "PWR_HI",
-        "pattern": "VIN_PROT"
-      },
-      {
-        "netclass": "PWR_HI",
         "pattern": "VIN_B1"
-      },
-      {
-        "netclass": "PWR_HI",
-        "pattern": "+5V_CM5"
-      },
-      {
-        "netclass": "PWR_HI",
-        "pattern": "+5V_AUX"
       },
       {
         "netclass": "PWR_HI",
@@ -511,6 +517,22 @@
       {
         "netclass": "PWR_HI",
         "pattern": "SCAP_CHG"
+      },
+      {
+        "netclass": "PLANE",
+        "pattern": "GND"
+      },
+      {
+        "netclass": "PLANE",
+        "pattern": "+5V_CM5"
+      },
+      {
+        "netclass": "PLANE",
+        "pattern": "+5V_AUX"
+      },
+      {
+        "netclass": "PLANE",
+        "pattern": "VIN_PROT"
       },
       {
         "netclass": "PWR_MID",

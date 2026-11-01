@@ -27,7 +27,7 @@ bb = b.GetBoardEdgesBoundingBox()
 W, L = pcbnew.ToMM(bb.GetWidth()), pcbnew.ToMM(bb.GetHeight())
 for layer in (pcbnew.F_Cu, pcbnew.B_Cu):
     z = pcbnew.ZONE(b); z.SetLayer(layer); z.SetNet(b.FindNet('GND')); z.SetAssignedPriority(0)
-    z.SetLocalClearance(FM(0.2)); z.SetMinThickness(FM(0.2)); z.SetPadConnection(pcbnew.ZONE_CONNECTION_FULL)
+    z.SetLocalClearance(FM(0.15)); z.SetMinThickness(FM(0.2)); z.SetPadConnection(pcbnew.ZONE_CONNECTION_FULL)
     z.SetThermalReliefGap(FM(0.25)); z.SetThermalReliefSpokeWidth(FM(0.3))
     z.SetIslandRemovalMode(pcbnew.ISLAND_REMOVAL_MODE_ALWAYS)
     ol = z.Outline(); ol.NewOutline()
@@ -66,7 +66,7 @@ for netname in POUR:
                 pts += [(TM(bb.GetX())-m, TM(bb.GetY())-m), (TM(bb.GetRight())+m, TM(bb.GetY())-m), (TM(bb.GetRight())+m, TM(bb.GetBottom())+m), (TM(bb.GetX())-m, TM(bb.GetBottom())+m)]
             h = hull(pts)
             z = pcbnew.ZONE(b); z.SetLayer(layer); z.SetNet(b.FindNet(netname)); z.SetAssignedPriority(3)
-            z.SetLocalClearance(FM(0.2)); z.SetMinThickness(FM(0.25)); z.SetPadConnection(pcbnew.ZONE_CONNECTION_FULL)
+            z.SetLocalClearance(FM(0.15)); z.SetMinThickness(FM(0.25)); z.SetPadConnection(pcbnew.ZONE_CONNECTION_FULL)
             z.SetIslandRemovalMode(pcbnew.ISLAND_REMOVAL_MODE_ALWAYS)
             ol = z.Outline(); ol.NewOutline()
             for x, y in h: ol.Append(FM(x), FM(y))
@@ -76,4 +76,6 @@ for z in b.Zones():
         z.SetIslandRemovalMode(pcbnew.ISLAND_REMOVAL_MODE_ALWAYS)
 pcbnew.ZONE_FILLER(b).Fill(b.Zones())
 b.Save(out)
+import shutil, os
+shutil.copy(src.replace('.kicad_pcb', '.kicad_pro'), out.replace('.kicad_pcb', '.kicad_pro'))
 print('applied', len(R['tracks']), 'tracks', len(R['vias']), 'vias ->', out)

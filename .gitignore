@@ -15,3 +15,11 @@ route/r20/
 route/noin2/
 route/f15/
 route/f30/
+**/route/f15/
+**/route/f30/
+**/route/r6/logs/
+**/route/r20/
+**/route/noin2/
+**/route/fast/
+**/route/logs/
+**/route/*.log

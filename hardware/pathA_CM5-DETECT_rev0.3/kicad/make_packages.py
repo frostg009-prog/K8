@@ -65,6 +65,8 @@ for name, v in VAR.items():
     # 05 kicad project
     kd = os.path.join(d, '05_KiCad_project'); os.makedirs(kd)
     shutil.copy(pcb, os.path.join(kd, 'CM5-DETECT_rev03.kicad_pcb'))
+    shutil.copy(pcb.replace('.kicad_pcb', '.kicad_pro'), os.path.join(kd, 'CM5-DETECT_rev03.kicad_pro'))
+    shutil.copy('/tmp/claude-0/-home-user-K8/8fc48cad-6552-5b7a-a937-c0e8e217cdce/scratchpad/DRAFT_STATUS.md', os.path.join(d, 'DRAFT_STATUS.md'))
     for f in ('design.py', 'build_board.py', 'make_fab.py', 'cost.py', 'impedance.py', 'gen3d.py'):
         shutil.copy(os.path.join(HERE, f), kd)
     shutil.copytree(os.path.join(HERE, 'lib'), os.path.join(kd, 'lib'), ignore=shutil.ignore_patterns('*.zip'))

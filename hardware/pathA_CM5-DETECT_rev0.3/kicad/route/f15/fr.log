@@ -19,3 +19,4 @@ Caused by: java.lang.NullPointerException: Cannot invoke "com.google.gson.JsonEl
 	at app.freerouting.management.VersionChecker.processResponse(VersionChecker.java:39)
 	at java.base/java.util.concurrent.CompletableFuture$UniAccept.tryFire(CompletableFuture.java:718)
 	... 9 more
+2026-11-01 18:46:06.340 [Thread-28] INFO  Starting auto-routing...

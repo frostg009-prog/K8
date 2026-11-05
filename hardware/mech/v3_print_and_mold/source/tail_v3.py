@@ -2,9 +2,9 @@ import cadquery as cq, trimesh
 from OCP.BRepAlgoAPI import BRepAlgoAPI_Splitter
 from OCP.TopTools import TopTools_ListOfShape
 t=cq.importers.importStep('in/tail.step').val(); v0=t.Volume()
-H=8.5
+H=5.2
 for ang in (0,45):
-    box=cq.Workplane().box(2*H,2*H,215.5-184.0,centered=(True,True,False)).edges('|Z').fillet(1.0).translate((0,0,184.0)).rotate((0,0,0),(0,0,1),ang).val()
+    box=cq.Workplane().box(2*H,2*H,215.5-184.0,centered=(True,True,False)).edges('|Z').fillet(1.5).translate((0,0,184.0)).rotate((0,0,0),(0,0,1),ang).val()
     r=t.cut(box); print(ang,r.isValid(),round((v0-r.Volume())/1000,2),'cm3 removed',len(r.Solids()))
     if (v0-r.Volume())>3000: break
 r=r.Solids()[0] if len(r.Solids())==1 else r

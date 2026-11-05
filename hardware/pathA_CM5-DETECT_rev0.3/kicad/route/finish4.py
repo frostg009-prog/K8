@@ -29,7 +29,9 @@ def nid(name):
 LI = {pcbnew.F_Cu: 0, pcbnew.In2_Cu: 1, pcbnew.B_Cu: 2}
 NL = 3
 LAY = [pcbnew.F_Cu, pcbnew.In2_Cu, pcbnew.B_Cu]
-VIA_R = 0.225
+BASE = os.environ.get('REZONIT_CLASS') == 'base'
+VIA_R = 0.3 if BASE else 0.225
+VIA_SZ = (0.6, 0.3) if BASE else (0.45, 0.2)
 EXPC = 0.03          # clearance raster expansion
 
 
@@ -205,7 +207,7 @@ for net, l, a, c, w in new_tracks:
     t = pcbnew.PCB_TRACK(B); t.SetStart(pcbnew.VECTOR2I(FM(a[0]), FM(a[1]))); t.SetEnd(pcbnew.VECTOR2I(FM(c[0]), FM(c[1])))
     t.SetWidth(FM(w)); t.SetLayer(LAY[l]); t.SetNet(B.FindNet(net)); B.Add(t)
 for net, x, y in new_vias:
-    v = pcbnew.PCB_VIA(B); v.SetPosition(pcbnew.VECTOR2I(FM(x), FM(y))); v.SetWidth(FM(0.45)); v.SetDrill(FM(0.2)); v.SetNet(B.FindNet(net)); B.Add(v)
+    v = pcbnew.PCB_VIA(B); v.SetPosition(pcbnew.VECTOR2I(FM(x), FM(y))); v.SetWidth(FM(VIA_SZ[0])); v.SetDrill(FM(VIA_SZ[1])); v.SetNet(B.FindNet(net)); B.Add(v)
 
 
 # ---------------------------------------------------------------- GND pour islands without a via -> one via per island
@@ -249,7 +251,7 @@ for lay_idx, lay in ((0, pcbnew.F_Cu), (2, pcbnew.B_Cu)):
         jj, ii = np.unravel_index(np.argmax(np.where(okm, sub, -1)), okm.shape)
         cx, cy = (ii + mi.start + .5) * G, (jj + mj.start + .5) * G
         new_vias.append(('GND', cx, cy)); gvias.append((cx, cy)); added += 1
-        v = pcbnew.PCB_VIA(B); v.SetPosition(pcbnew.VECTOR2I(FM(cx), FM(cy))); v.SetWidth(FM(0.45)); v.SetDrill(FM(0.2)); v.SetNet(B.FindNet('GND')); B.Add(v)
+        v = pcbnew.PCB_VIA(B); v.SetPosition(pcbnew.VECTOR2I(FM(cx), FM(cy))); v.SetWidth(FM(VIA_SZ[0])); v.SetDrill(FM(VIA_SZ[1])); v.SetNet(B.FindNet('GND')); B.Add(v)
         r2 = int(math.ceil((VIA_R + EXPC) / G))
         for ll in (0, 1, 2):
             sb = OC[ll, max(int(cy / G) - r2, 0):int(cy / G) + r2 + 1, max(int(cx / G) - r2, 0):int(cx / G) + r2 + 1]; sb[sb == 0] = gid

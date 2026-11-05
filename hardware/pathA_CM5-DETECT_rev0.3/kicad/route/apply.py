@@ -1,5 +1,7 @@
 # KiCad python: apply routes.json to placed board, add outer GND pours, fill zones, save routed board
-import sys, json, pcbnew
+import sys, json, os, pcbnew
+CLR = 0.2 if os.environ.get('REZONIT_CLASS') == 'base' else 0.15
+VIA = (0.6, 0.3) if os.environ.get('REZONIT_CLASS') == 'base' else (0.45, 0.2)
 src, routes, out = sys.argv[1:4]
 b = pcbnew.LoadBoard(src)
 R = json.load(open(routes)) if routes.endswith('.json') else {'tracks': [], 'vias': []}
@@ -21,13 +23,13 @@ for n, x, y in R['vias']:
     if k in seen: continue
     seen.add(k)
     v = pcbnew.PCB_VIA(b); v.SetPosition(pcbnew.VECTOR2I(FM(x), FM(y)))
-    v.SetWidth(FM(0.45)); v.SetDrill(FM(0.2)); v.SetNet(b.FindNet(n)); b.Add(v)
+    v.SetWidth(FM(VIA[0])); v.SetDrill(FM(VIA[1])); v.SetNet(b.FindNet(n)); b.Add(v)
 # outer-layer GND pours (lowest priority) for return paths and shielding
 bb = b.GetBoardEdgesBoundingBox()
 W, L = pcbnew.ToMM(bb.GetWidth()), pcbnew.ToMM(bb.GetHeight())
 for layer in (pcbnew.F_Cu, pcbnew.B_Cu):
     z = pcbnew.ZONE(b); z.SetLayer(layer); z.SetNet(b.FindNet('GND')); z.SetAssignedPriority(0)
-    z.SetLocalClearance(FM(0.15)); z.SetMinThickness(FM(0.2)); z.SetPadConnection(pcbnew.ZONE_CONNECTION_FULL)
+    z.SetLocalClearance(FM(CLR)); z.SetMinThickness(FM(0.2)); z.SetPadConnection(pcbnew.ZONE_CONNECTION_FULL)
     z.SetThermalReliefGap(FM(0.25)); z.SetThermalReliefSpokeWidth(FM(0.3))
     z.SetIslandRemovalMode(pcbnew.ISLAND_REMOVAL_MODE_ALWAYS)
     ol = z.Outline(); ol.NewOutline()
@@ -66,7 +68,7 @@ for netname in POUR:
                 pts += [(TM(bb.GetX())-m, TM(bb.GetY())-m), (TM(bb.GetRight())+m, TM(bb.GetY())-m), (TM(bb.GetRight())+m, TM(bb.GetBottom())+m), (TM(bb.GetX())-m, TM(bb.GetBottom())+m)]
             h = hull(pts)
             z = pcbnew.ZONE(b); z.SetLayer(layer); z.SetNet(b.FindNet(netname)); z.SetAssignedPriority(3)
-            z.SetLocalClearance(FM(0.15)); z.SetMinThickness(FM(0.25)); z.SetPadConnection(pcbnew.ZONE_CONNECTION_FULL)
+            z.SetLocalClearance(FM(CLR)); z.SetMinThickness(FM(0.25)); z.SetPadConnection(pcbnew.ZONE_CONNECTION_FULL)
             z.SetIslandRemovalMode(pcbnew.ISLAND_REMOVAL_MODE_ALWAYS)
             ol = z.Outline(); ol.NewOutline()
             for x, y in h: ol.Append(FM(x), FM(y))

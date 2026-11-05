@@ -8,6 +8,8 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from design import C, DIFF100, DIFF90, POWER_HI, POWER_MID
 
 HERE = os.path.dirname(os.path.abspath(__file__))
+BASE = os.environ.get('REZONIT_CLASS', 'advanced') == 'base'
+VIA = (0.6, 0.3) if BASE else (0.45, 0.2)
 W, L = 44.0, 157.0
 YK, YS = 68.0, 1.35
 stretch = lambda y: y if y <= YK else YK + (y - YK) * YS
@@ -70,9 +72,9 @@ def main(out):
     ds = B.GetDesignSettings()
     ds.SetBoardThickness(FM(1.5))
     # ---- Rezonit 4L "1,5mm 18um Tg150 Impedance" + JLC: 0.125/0.125 mm, via 0.45/0.2
-    ds.m_TrackMinWidth = FM(0.1); ds.m_MinClearance = FM(0.1); ds.m_ViasMinSize = FM(0.4); ds.m_MinThroughDrill = FM(0.2)
+    ds.m_TrackMinWidth = FM(0.125 if BASE else 0.1); ds.m_MinClearance = FM(0.125 if BASE else 0.1); ds.m_ViasMinSize = FM(0.6 if BASE else 0.4); ds.m_MinThroughDrill = FM(0.3 if BASE else 0.2)
     ds.m_CopperEdgeClearance = FM(0.3); ds.m_HoleClearance = FM(0.2); ds.m_HoleToHoleMin = FM(0.25)
-    ds.m_ViasMinAnnularWidth = FM(0.1)
+    ds.m_ViasMinAnnularWidth = FM(0.15 if BASE else 0.1)
     for a, b in zip([(0, 0), (W, 0), (W, L), (0, L)], [(W, 0), (W, L), (0, L), (0, 0)]):
         s = pcbnew.PCB_SHAPE(B); s.SetShape(pcbnew.SHAPE_T_SEGMENT); s.SetStart(V(*a)); s.SetEnd(V(*b))
         s.SetLayer(pcbnew.Edge_Cuts); s.SetWidth(FM(0.1)); B.Add(s)
@@ -224,13 +226,14 @@ def main(out):
                 pad.SetNet(net(n))
     # ---- net classes
     ns = ds.m_NetSettings
-    def ncls(name, w, clr, dpw=None, dpg=None, via=(0.45, 0.2)):
+    def ncls(name, w, clr, dpw=None, dpg=None, via=None):
+        via = via or VIA
         nc = pcbnew.NETCLASS(name)
         nc.SetTrackWidth(FM(w)); nc.SetClearance(FM(clr)); nc.SetViaDiameter(FM(via[0])); nc.SetViaDrill(FM(via[1]))
         if dpw: nc.SetDiffPairWidth(FM(dpw)); nc.SetDiffPairGap(FM(dpg))
         ns.SetNetclass(name, nc)
         return nc
-    dflt = ns.GetDefaultNetclass(); dflt.SetTrackWidth(FM(0.15)); dflt.SetClearance(FM(0.125)); dflt.SetViaDiameter(FM(0.45)); dflt.SetViaDrill(FM(0.2))
+    dflt = ns.GetDefaultNetclass(); dflt.SetTrackWidth(FM(0.15)); dflt.SetClearance(FM(0.125)); dflt.SetViaDiameter(FM(VIA[0])); dflt.SetViaDrill(FM(VIA[1]))
     ncls('DIFF100', 0.13, 0.15, 0.13, 0.17)
     ncls('DIFF90', 0.17, 0.15, 0.17, 0.15)
     ncls('PWR_HI', 0.8, 0.2, via=(0.6, 0.3))

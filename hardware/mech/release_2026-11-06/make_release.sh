@@ -7,10 +7,10 @@ P=$R/DRONE_PRINT_all_parts_single_piece; mkdir -p $P/STEP $P/STL
 cp nose_v4.step $P/STEP/01_Nose_x1.STEP;                 cp nose_v4_fix.stl $P/STL/01_Nose_x1.stl
 cp tail_v11.step $P/STEP/02_Tail_x1.STEP;                cp tail_v11_fix.stl $P/STL/02_Tail_x1.stl
 cp eleron_v4.step $P/STEP/03_Aileron_x4.STEP;            cp eleron_v4.stl $P/STL/03_Aileron_x4.stl
-cp korpus_PLUS_Y.step $P/STEP/04_Body_Panel_A_with_window_x1.STEP;            cp korpus_PLUS_Y_final.stl $P/STL/04_Body_Panel_A_with_window_x1.stl
-cp korpus_MINUS_Y.step $P/STEP/05_Body_Panel_B_with_battery_balance_plug_slot_x1.STEP; cp korpus_MINUS_Y_final.stl $P/STL/05_Body_Panel_B_with_battery_balance_plug_slot_x1.stl
-cp korpus_PLUS_X.step $P/STEP/06_Body_Panel_C_louvered_x1.STEP;               cp korpus_PLUS_X_final.stl $P/STL/06_Body_Panel_C_louvered_x1.stl
-cp korpus_MINUS_X.step $P/STEP/07_Body_Panel_D_louvered_x1.STEP;              cp korpus_MINUS_X_final.stl $P/STL/07_Body_Panel_D_louvered_x1.stl
+cp panel_seamless_PLUS_Y.step $P/STEP/04_Body_Panel_A_with_window_x1.STEP;            cp panel_seamless_PLUS_Y.stl $P/STL/04_Body_Panel_A_with_window_x1.stl
+cp panel_seamless_MINUS_Y.step $P/STEP/05_Body_Panel_B_with_battery_balance_plug_slot_x1.STEP; cp panel_seamless_MINUS_Y.stl $P/STL/05_Body_Panel_B_with_battery_balance_plug_slot_x1.stl
+cp panel_seamless_PLUS_X.step $P/STEP/06_Body_Panel_C_louvered_x1.STEP;               cp panel_seamless_PLUS_X.stl $P/STL/06_Body_Panel_C_louvered_x1.stl
+cp panel_seamless_MINUS_X.step $P/STEP/07_Body_Panel_D_louvered_x1.STEP;              cp panel_seamless_MINUS_X.stl $P/STL/07_Body_Panel_D_louvered_x1.stl
 cp oldasm/wing_big_q1.step $P/STEP/08_Wing_Large_x4.STEP;       cp "vse/12_Крыло_большое_1_iz_4.stl" $P/STL/08_Wing_Large_x4.stl
 cp oldasm/wing_front_q1.step $P/STEP/09_Wing_Front_x4.STEP;     cp "vse/13_Крыло_переднее_1_iz_4.stl" $P/STL/09_Wing_Front_x4.stl
 cp oldasm/holder_big.step $P/STEP/10_Tube_Holder_Large_Wing_x4.STEP; cp "vse/14_Крепление_трубки_большого_крыла_1_iz_4.stl" $P/STL/10_Tube_Holder_Large_Wing_x4.stl

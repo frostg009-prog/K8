@@ -1,0 +1,57 @@
+== 1_PRINT_4_large_panels
+  OK    01_Nose_x1                                                 STEP   31.88 valid=True solids=1 | STL   31.71 watertight=True bodies=1 diff 0.5%
+  OK    02_Tail_x1                                                 STEP  108.09 valid=True solids=1 | STL  108.04 watertight=True bodies=1 diff 0.1%
+  OK    03_Aileron_x4                                              STEP   35.53 valid=True solids=1 | STL   35.14 watertight=True bodies=1 diff 1.1%
+  OK    04_Body_Panel_A_with_window_x1                             STEP   54.12 valid=True solids=1 | STL   54.09 watertight=True bodies=1 diff 0.0%
+  OK    05_Body_Panel_B_with_battery_balance_plug_slot_x1          STEP   54.41 valid=True solids=1 | STL   54.50 watertight=True bodies=1 diff 0.2%
+  OK    06_Body_Panel_C_louvered_x1                                STEP   54.74 valid=True solids=1 | STL   54.88 watertight=True bodies=1 diff 0.2%
+  OK    07_Body_Panel_D_louvered_x1                                STEP   54.80 valid=True solids=1 | STL   54.90 watertight=True bodies=1 diff 0.2%
+  OK    20_Wing_Large_x4                                           STEP  241.90 valid=True solids=1 | STL  241.73 watertight=True bodies=1 diff 0.1%
+  OK    21_Wing_Front_x4                                           STEP  128.09 valid=True solids=1 | STL  128.15 watertight=True bodies=1 diff 0.0%
+  OK    22_Tube_Holder_Large_Wings_center_x1                       STEP   35.01 valid=True solids=1 | STL   35.01 watertight=True bodies=1 diff 0.0%
+  OK    23_Tube_Holder_Front_Wings_center_x1                       STEP   35.01 valid=True solids=1 | STL   35.01 watertight=True bodies=1 diff 0.0%
+  OK    24_Tail_Mount_Plate_x1                                     STEP    9.17 valid=True solids=1 | STL    9.17 watertight=True bodies=1 diff 0.0%
+  OK    25_Battery_Support_x1                                      STEP    6.24 valid=True solids=1 | STL    6.24 watertight=True bodies=1 diff 0.0%
+  OK    26_Motor_Mount_x4                                          STEP    3.11 valid=True solids=1 | STL    3.10 watertight=True bodies=1 diff 0.1%
+== 2_MOULD_injection
+  OK    01_Nose_x1                                                 STEP   31.88 valid=True solids=1 | STL   31.71 watertight=True bodies=1 diff 0.5%
+  OK    02_Tail_one_piece_for_3_part_tool_x1                       STEP  108.09 valid=True solids=1 | STL  108.04 watertight=True bodies=1 diff 0.1%
+  OK    03a_Aileron_half_A_x4                                      STEP   17.76 valid=True solids=1 | STL   17.55 watertight=True bodies=1 diff 1.2%
+  OK    03b_Aileron_half_B_x4                                      STEP   17.78 valid=True solids=1 | STL   17.58 watertight=True bodies=1 diff 1.1%
+  OK    04_Body_Panel_A_with_window_x1                             STEP   54.12 valid=True solids=1 | STL   54.09 watertight=True bodies=1 diff 0.0%
+  OK    05_Body_Panel_B_with_battery_balance_plug_slot_x1          STEP   54.41 valid=True solids=1 | STL   54.50 watertight=True bodies=1 diff 0.2%
+  OK    06_Body_Panel_C_louvered_x1                                STEP   54.74 valid=True solids=1 | STL   54.88 watertight=True bodies=1 diff 0.2%
+  OK    07_Body_Panel_D_louvered_x1                                STEP   54.80 valid=True solids=1 | STL   54.90 watertight=True bodies=1 diff 0.2%
+  OK    08a_Wing_Large_Top_half_lightened_x4                       STEP   71.10 valid=True solids=1 | STL   69.25 watertight=True bodies=1 diff 2.6%
+  OK    08b_Wing_Large_Bottom_half_lightened_x4                    STEP   82.93 valid=True solids=1 | STL   80.81 watertight=True bodies=1 diff 2.6%
+  OK    09a_Wing_Front_Top_half_lightened_x4                       STEP   39.17 valid=True solids=1 | STL   38.37 watertight=True bodies=1 diff 2.1%
+  OK    09b_Wing_Front_Bottom_half_lightened_x4                    STEP   30.71 valid=True solids=1 | STL   30.22 watertight=True bodies=1 diff 1.6%
+  OK    10_Tube_Holder_Large_Wings_center_x1                       STEP   35.01 valid=True solids=1 | STL   35.01 watertight=True bodies=1 diff 0.0%
+  OK    11_Tube_Holder_Front_Wings_center_x1                       STEP   35.01 valid=True solids=1 | STL   35.01 watertight=True bodies=1 diff 0.0%
+  OK    12_Tail_Mount_Plate_x1                                     STEP    9.17 valid=True solids=1 | STL    9.17 watertight=True bodies=1 diff 0.0%
+  OK    13_Battery_Support_x1                                      STEP    6.24 valid=True solids=1 | STL    6.24 watertight=True bodies=1 diff 0.0%
+  OK    14_Motor_Mount_x4                                          STEP    3.11 valid=True solids=1 | STL    3.10 watertight=True bodies=1 diff 0.1%
+== 3_PRINT_12_separate_panels
+  OK    01_Nose_x1                                                 STEP   31.88 valid=True solids=1 | STL   31.71 watertight=True bodies=1 diff 0.5%
+  OK    02_Tail_x1                                                 STEP  108.09 valid=True solids=1 | STL  108.04 watertight=True bodies=1 diff 0.1%
+  OK    03_Aileron_x4                                              STEP   35.53 valid=True solids=1 | STL   35.14 watertight=True bodies=1 diff 1.1%
+  OK    04_Body_Panel_MinusX_z-200_to_-40_x1                       STEP   21.47 valid=True solids=1 | STL   21.44 watertight=True bodies=1 diff 0.1%
+  OK    05_Body_Panel_MinusX_z-266_to_-201_x1                      STEP    6.89 valid=True solids=1 | STL    6.89 watertight=True bodies=1 diff 0.0%
+  OK    06_Body_Panel_MinusX_z-50_to_180_x1                        STEP   28.68 valid=True solids=1 | STL   28.68 watertight=True bodies=1 diff 0.0%
+  OK    07_Body_Panel_MinusY_z-120_to_10_x1                        STEP   17.49 valid=True solids=1 | STL   17.49 watertight=True bodies=1 diff 0.0%
+  OK    08_Body_Panel_MinusY_z-266_to_-110_x1                      STEP   18.71 valid=True solids=1 | STL   18.74 watertight=True bodies=1 diff 0.1%
+  OK    09_Body_Panel_MinusY_z0_to_180_x1                          STEP   21.80 valid=True solids=1 | STL   21.79 watertight=True bodies=1 diff 0.0%
+  OK    10_Body_Panel_PlusX_z-200_to_-40_x1                        STEP   21.45 valid=True solids=1 | STL   21.44 watertight=True bodies=1 diff 0.1%
+  OK    11_Body_Panel_PlusX_z-266_to_-201_x1                       STEP    6.89 valid=True solids=1 | STL    6.89 watertight=True bodies=1 diff 0.1%
+  OK    12_Body_Panel_PlusX_z-50_to_180_x1                         STEP   28.70 valid=True solids=1 | STL   28.68 watertight=True bodies=1 diff 0.1%
+  OK    13_Body_Panel_PlusY_z-120_to_10_x1                         STEP   17.49 valid=True solids=1 | STL   17.49 watertight=True bodies=1 diff 0.0%
+  OK    14_Body_Panel_PlusY_z-266_to_-110_x1                       STEP   18.74 valid=True solids=1 | STL   18.74 watertight=True bodies=1 diff 0.0%
+  OK    15_Body_Panel_PlusY_z0_to_180_x1                           STEP   21.10 valid=True solids=1 | STL   21.06 watertight=True bodies=1 diff 0.2%
+  OK    20_Wing_Large_x4                                           STEP  241.90 valid=True solids=1 | STL  241.73 watertight=True bodies=1 diff 0.1%
+  OK    21_Wing_Front_x4                                           STEP  128.09 valid=True solids=1 | STL  128.15 watertight=True bodies=1 diff 0.0%
+  OK    22_Tube_Holder_Large_Wings_center_x1                       STEP   35.01 valid=True solids=1 | STL   35.01 watertight=True bodies=1 diff 0.0%
+  OK    23_Tube_Holder_Front_Wings_center_x1                       STEP   35.01 valid=True solids=1 | STL   35.01 watertight=True bodies=1 diff 0.0%
+  OK    24_Tail_Mount_Plate_x1                                     STEP    9.17 valid=True solids=1 | STL    9.17 watertight=True bodies=1 diff 0.0%
+  OK    25_Battery_Support_x1                                      STEP    6.24 valid=True solids=1 | STL    6.24 watertight=True bodies=1 diff 0.0%
+  OK    26_Motor_Mount_x4                                          STEP    3.11 valid=True solids=1 | STL    3.10 watertight=True bodies=1 diff 0.1%
+problems: 0

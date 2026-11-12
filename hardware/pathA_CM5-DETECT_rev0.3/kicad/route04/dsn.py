@@ -6,7 +6,7 @@ import sys, re, pcbnew
 src, out = sys.argv[1:3]
 b = pcbnew.LoadBoard(src)
 TM = pcbnew.ToMM
-W, L = 47.0, 138.0                # rev0.4b board size
+_bb = b.GetBoardEdgesBoundingBox(); W, L = TM(_bb.GetWidth()), TM(_bb.GetHeight())
 tmp = out + '.raw'
 assert pcbnew.ExportSpecctraDSN(b, tmp)
 s = open(tmp).read()

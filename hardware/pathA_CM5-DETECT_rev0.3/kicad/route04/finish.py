@@ -5,6 +5,7 @@ import sys, pcbnew
 src, ses, out = sys.argv[1:4]
 FM = pcbnew.FromMM
 b = pcbnew.LoadBoard(src)
+_bb = b.GetBoardEdgesBoundingBox(); W, L = pcbnew.ToMM(_bb.GetWidth()), pcbnew.ToMM(_bb.GetHeight())
 locked = {(t.GetNetname(), t.GetStart().x, t.GetStart().y, t.GetEnd().x, t.GetEnd().y) for t in b.GetTracks() if t.IsLocked()}
 print('SES import', pcbnew.ImportSpecctraSES(b, ses))
 # duplicate-safe: the session re-emits the fixed pair wires; remove exact duplicates
@@ -16,8 +17,6 @@ for t in list(b.GetTracks()):
     else:
         seen.add(k)
 print('duplicates removed', dup)
-bb = b.GetBoardEdgesBoundingBox()
-W, L = pcbnew.ToMM(bb.GetWidth()), pcbnew.ToMM(bb.GetHeight())
 for layer in (pcbnew.F_Cu, pcbnew.B_Cu):           # outer GND pours, stitched to the inner GND planes
     z = pcbnew.ZONE(b); z.SetLayer(layer); z.SetNet(b.FindNet('GND')); z.SetAssignedPriority(0)
     z.SetLocalClearance(FM(0.2)); z.SetMinThickness(FM(0.2)); z.SetPadConnection(pcbnew.ZONE_CONNECTION_THERMAL)

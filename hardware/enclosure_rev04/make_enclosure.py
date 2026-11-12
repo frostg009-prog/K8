@@ -118,9 +118,10 @@ for x, y in [(h[0], h[1]) for h in hole_board]:
 for x, y, _ in hole_cm5:
     base = base + cyl(x, Y(y), FLOOR - 0.01, Z_BB, 2.9)
     base = base - cyl(x, Y(y), FLOOR + 1.0, Z_BB + 1, 1.05)           # pilot for M2.5 self-tapping (or M2.5 heat-set insert: drill 3.6)
+M1 = [p for p in D['parts'] if p['ref'] == 'M1'][0]['bb']     # CM5 module outline (KiCad coords)
 # ventilation slots in the floor (under the CM5 area: bottom parts are low there)
 for i in range(7):
-    xs = 9.0 + i * 4.0
+    xs = M1[0] + 7.0 + i * 4.0
     base = base - box(xs, Y(60.0), -1, xs + 1.8, Y(20.0), FLOOR + 0.5)
 # ---------------------------------------------------------------- lid
 lid = outer - cavity
@@ -144,7 +145,7 @@ for p in D['parts']:
         lid = lid - cyl(cx, Y(cy), Z_TOP - FLOOR - 1, Z_TOP + 1, 1.0)
 # vent grille over the CM5 cooler + side vents
 for i in range(8):
-    xs = 7.0 + i * 4.0
+    xs = M1[0] + 5.0 + i * 4.0
     lid = lid - box(xs, Y(62.0), Z_TOP - FLOOR - 1, xs + 2.0, Y(18.0), Z_TOP + 1)
 for yk in (30.0, 45.0, 60.0):
     for xs, xe in ((X0 - 1, 0.5), (BW - 0.5, X0 + OX + 1)):

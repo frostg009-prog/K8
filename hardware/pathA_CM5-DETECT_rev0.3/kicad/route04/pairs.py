@@ -74,7 +74,7 @@ def run(*a, **k):
     return {n: (s, e) for n, s, e in pair(*a, **k)}
 
 
-DX = 3.0      # board widened in rev0.4b: CM5 and everything right of it moved +DX
+DX = 6.0      # board widened in rev0.4b: CM5 and everything right of it moved +DX
 W100, G100 = 0.13, 0.17
 W90, G90 = 0.17, 0.15
 DV = 0.29            # half distance between the two vias of a pair (0.45 mm vias, 0.13 mm gap)
@@ -92,18 +92,21 @@ for lane, yc, xc, pn, pp, cn, cp in [('D0', 35.7, 35.0, '115', '117', '2', '3'),
         pre={N: [PAD[('M1', pn)]], P: [PAD[('M1', pp)]]},
         post={N: [(xc + 0.25, 7.95), PAD[('J_CAM1', cn)]], P: [(xc - 0.25, 7.95), PAD[('J_CAM1', cp)]]})
 # ---------------------------------------------------------------- CAM2 (top layer)
+CAM2_S, CAM2_YJ = 8.0, 10.6
 for lane, yc, xc, pn, pp, cn, cp in [('D0', 47.7, 16.5, '175', '177', '2', '3'), ('D1', 48.9, 15.0, '181', '183', '5', '6'),
                                      ('C', 50.1, 13.5, '187', '189', '8', '9'), ('D2', 51.3, 12.0, '193', '195', '11', '12')]:
     N, P = 'CAM2_%s_N' % lane, 'CAM2_%s_P' % lane
     xc = (PAD[('J_CAM2', cn)][0] + PAD[('J_CAM2', cp)][0]) / 2
-    c = [(36.75 + DX, yc), (xc + 0.6, yc), (xc, yc - 0.6), (xc, 8.35)]
+    xv = xc + CAM2_S        # vertical run shifted east: keeps the CM5 GPIO pocket open for escapes
+    c = [(36.75 + DX, yc), (xv + 0.6, yc), (xv, yc - 0.6), (xv, CAM2_YJ + CAM2_S), (xc, CAM2_YJ), (xc, 8.35)]
     run(P, N, 'F', c, W100, G100,
         pre={N: [PAD[('M1', pn)]], P: [PAD[('M1', pp)]]},
         post={N: [(xc + 0.25, 7.95), PAD[('J_CAM2', cn)]], P: [(xc - 0.25, 7.95), PAD[('J_CAM2', cp)]]})
 # CAM2 D3 sits on the outer row: leave through the channel between the two pad rows, round the connector end
 N, P = 'CAM2_D3_N', 'CAM2_D3_P'
 xc = (PAD[('J_CAM2', '14')][0] + PAD[('J_CAM2', '15')][0]) / 2
-c = [(39.4 + DX, 51.75), (39.4 + DX, 52.6), (39.0 + DX, 53.0), (xc + 0.6, 53.0), (xc, 52.4), (xc, 8.35)]
+xv = xc + CAM2_S
+c = [(39.4 + DX, 51.75), (39.4 + DX, 52.6), (39.0 + DX, 53.0), (xv + 0.6, 53.0), (xv, 52.4), (xv, CAM2_YJ + CAM2_S), (xc, CAM2_YJ), (xc, 8.35)]
 # heading south in the channel: P east (left of travel), N west
 pN, pP = PAD[('M1', '194')], PAD[('M1', '196')]
 run(P, N, 'F', c, W100, G100,

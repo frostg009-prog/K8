@@ -10,7 +10,7 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
 from design import C, NEAR, DIFF100, DIFF90, POWER_HI, POWER_MID
 
-DX = 3.0                 # rev0.4b: board widened by DX; everything except the west-edge parts shifts right by DX
+DX = 6.0                 # rev0.4b: board widened by DX; everything except the west-edge parts shifts right by DX
 W, L = 44.0 + DX, 138.0
 VIA = (0.45, 0.2)
 FM = pcbnew.FromMM
@@ -36,7 +36,7 @@ P = {
     'H1': (4.0, 122.05, 0, 'F'), 'H2': (41.3, 111.6, 0, 'F'), 'H3': (2.2, 4.0, 0, 'F'), 'H4': (41.8, 4.0, 0, 'F'),
     'H5': (2.4, 83.0, 0, 'F'), 'H6': (41.6, 83.0, 0, 'F'),
     # ---- bottom side: edge connectors
-    'J_PCIE': (31.5, 4.6, 'N', 'B'), 'J_SD': (10.15, 27.8, 90, 'B'),
+    'J_PCIE': (31.5, 4.6, 'N', 'B'), 'J_SD': (10.15, 21.6, 90, 'B'),
     'J_MATEK': (3.4, 41.4, 'W', 'B'), 'J_GPS': (3.4, 51.0, 'W', 'B'), 'J_I2C': (3.4, 90.35, 'W', 'B'),
     'J_IO': (3.4, 102.45, 'W', 'B'),
     'J_S1': (40.6, 22.1, 'E', 'B'), 'J_FAN': (40.6, 31.05, 'E', 'B'),
@@ -316,7 +316,7 @@ def main(out):
     dflt = ns.GetDefaultNetclass(); dflt.SetTrackWidth(FM(0.15)); dflt.SetClearance(FM(0.125)); dflt.SetViaDiameter(FM(VIA[0])); dflt.SetViaDrill(FM(VIA[1]))
     ncls('DIFF100', 0.13, 0.125, 0.13, 0.17)
     ncls('DIFF90', 0.17, 0.125, 0.17, 0.15)
-    ncls('PWR_HI', 0.8, 0.2, via=(0.6, 0.3))
+    ncls('PWR_HI', 0.8, 0.15, via=(0.6, 0.3))      # <= 25 V: 0.15 mm is ample (IPC-2221B, external, coated)
     ncls('PWR_MID', 0.4, 0.15, via=(0.6, 0.3))
     ncls('PLANE', 0.3, 0.15, via=(0.6, 0.3))
     for n in DIFF100: ns.SetNetclassPatternAssignment(n, 'DIFF100')
@@ -354,17 +354,20 @@ PLANE_ISLANDS0 = {
     'VIN_PROT': [(17.5, 84.5), (33.5, 84.5), (33.5, 103.0), (39.0, 103.0), (39.0, 109.0), (17.5, 109.0)],
 }
 # routing corridors kept free of auto-placed parts: (side, [x0, y0, x1, y1, name])
+# fan-out via bands of the CM5 GPIO connector (both sides kept free of parts): x already includes DX
+FANOUT_BANDS = [(6.9 + 0.0, 31.8, 9.1, 53.2), (12.95, 31.8, 15.15, 53.2)]
 KEEP0 = [
     ('B', [18.2, 30.4, 37.3, 32.6, 'USB1.bot']), ('B', [18.2, 30.4, 20.2, 72.5, 'USB1.bot']),
     ('F', [6.9, 74.3, 20.2, 75.7, 'USB1.top']), ('F', [18.2, 68.0, 20.2, 75.7, 'USB1.top']),
     ('B', [34.0, 44.0, 35.6, 92.5, 'THU.bot']), ('B', [34.0, 88.5, 37.5, 92.5, 'THU.bot']),
     ('F', [35.2, 67.8, 43.6, 69.6, 'USB2.top']), ('F', [35.2, 67.8, 37.0, 76.0, 'USB2.top']),
-    ('F', [27.5, 7.7, 37.4, 12.3, 'CAM1.top']), ('F', [9.2, 7.7, 19.2, 12.3, 'CAM2.top']), ('F', [40.9, 10.0, 43.7, 12.4, 'PCIE.top']),
+    ('F', [27.5, 7.7, 37.4, 12.3, 'CAM1.top']), ('F', [9.2, 7.7, 28.0, 19.5, 'CAM2.top']), ('F', [40.9, 10.0, 43.7, 12.4, 'PCIE.top']),
     ('B', [28.0, 7.2, 43.6, 14.6, 'PCIE.bot']), ('F', [12.8, 83.4, 17.2, 88.6, 'B1_SW']), ('F', [26.8, 100.9, 31.2, 106.1, 'B2_SW']),
 ]
 
 PLANE_ISLANDS = {k: [((x + DX) if x > 1.0 else x, y) for x, y in v] for k, v in PLANE_ISLANDS0.items()}
 KEEP = [(sd, [b[0] + DX, b[1], b[2] + DX, b[3], b[4]]) for sd, b in KEEP0]
+KEEP += [(sd, [x0, y0, x1, y1, 'CM5.fanout']) for sd in 'FB' for x0, y0, x1, y1 in FANOUT_BANDS]
 
 if __name__ == '__main__':
     errs = main(sys.argv[1] if len(sys.argv) > 1 else HERE + '/CM5-DETECT_rev04_placed.kicad_pcb')

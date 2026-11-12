@@ -1,7 +1,8 @@
 # KiCad python: export mechanical data (holes, edge connectors, buttons, LEDs) for the enclosure generator
 import sys, json, pcbnew
 b = pcbnew.LoadBoard(sys.argv[1]); TM = pcbnew.ToMM
-out = {'board': [47.0, 138.0, 1.5], 'holes': [], 'parts': []}
+_bb = b.GetBoardEdgesBoundingBox()
+out = {'board': [round(TM(_bb.GetWidth()), 3), round(TM(_bb.GetHeight()), 3), 1.5], 'holes': [], 'parts': []}
 for fp in b.GetFootprints():
     r = fp.GetReference()
     if r.startswith('H') and r[1:].isdigit():

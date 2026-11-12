@@ -68,8 +68,10 @@ LED = 'LED_SMD:LED_0603_1608Metric'
 SOT23 = 'Package_TO_SOT_SMD:SOT-23'
 SOT235 = 'Package_TO_SOT_SMD:SOT-23-5'
 SOT236 = 'Package_TO_SOT_SMD:SOT-23-6'
-GH = lambda n: 'Connector_JST:JST_GH_SM%02dB-GHS-TB_1x%02d-1MP_P1.25mm_Horizontal' % (n, n)
-GH_LCSC = {2: 'C189893', 3: 'C514175', 4: 'C189895', 6: 'C133065', 8: 'C42376901'}
+# rev0.4: all wire-to-board connectors are JST-SH 1.0 mm (SMxxB-SRSS-TB), per customer request.
+# LCSC codes: verify stock before ordering.
+GH = lambda n: 'Connector_JST:JST_SH_SM%02dB-SRSS-TB_1x%02d-1MP_P1.00mm_Horizontal' % (n, n)
+GH_LCSC = {2: 'C160402', 3: 'C160403', 4: 'C160404', 6: 'C160406', 8: 'C160408'}
 
 _n = {'R': 0, 'C': 0}
 

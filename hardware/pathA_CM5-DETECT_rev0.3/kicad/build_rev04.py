@@ -36,7 +36,7 @@ P = {
     'H1': (4.0, 122.05, 0, 'F'), 'H2': (41.3, 111.6, 0, 'F'), 'H3': (2.2, 4.0, 0, 'F'), 'H4': (41.8, 4.0, 0, 'F'),
     'H5': (2.4, 83.0, 0, 'F'), 'H6': (41.6, 83.0, 0, 'F'),
     # ---- bottom side: edge connectors
-    'J_PCIE': (31.5, 4.6, 'N', 'B'), 'J_SD': (10.15, 21.6, 90, 'B'),
+    'J_PCIE': (31.5, 4.6, 'N', 'B'), 'J_SD': (10.15, 23.4, 90, 'B'),
     'J_MATEK': (3.4, 41.4, 'W', 'B'), 'J_GPS': (3.4, 51.0, 'W', 'B'), 'J_I2C': (3.4, 90.35, 'W', 'B'),
     'J_IO': (3.4, 102.45, 'W', 'B'),
     'J_S1': (40.6, 22.1, 'E', 'B'), 'J_FAN': (40.6, 31.05, 'E', 'B'),
@@ -48,7 +48,7 @@ P = {
     'U_SD': (20.6, 22.0, 0, 'B'), 'U_SEC': (29.5, 27.0, 0, 'B'), 'U_TEMP': (29.5, 52.0, 0, 'B'),
     'U_MCU': (24.8, 41.0, 0, 'B'), 'U_AON': (14.5, 46.5, 0, 'B'),
     'Q_PMIC': (10.5, 55.5, 0, 'B'), 'Q_PWB': (10.5, 59.5, 0, 'B'),
-    'JP_WDT': (31.6, 34.6, 0, 'B'), 'JP_MATEK': (9.2, 41.4, 90, 'B'),
+    'JP_WDT': (31.6, 34.6, 0, 'B'), 
     # ---- bottom side: USB / switches
     'U_ESD1': (10.0, 72.5, 0, 'B'), 'U_ID1': (11.0, 77.0, 0, 'B'), 'U_ID2': (11.0, 81.0, 0, 'B'),
     'U_ESD2': (30.5, 72.5, 0, 'B'), 'U_VB2': (30.5, 78.5, 0, 'B'),
@@ -65,7 +65,7 @@ GLOBAL = ('GND', '+5V_CM5', '+3V3_CM5', '+3V3_AON', '+5V_AUX', 'VIN_PROT')
 HINT = dict(NEAR)
 HINT.update({'TP_GND': 'U_MCU.7', 'TP_3V3': 'U_MCU.9', 'TP_5V': 'U_AON.1', 'TP_VIN': 'D_B1IN.2', 'TP_5VA': 'L_B2.2',
              'TP_SWIO': 'U_MCU.18', 'TP_RST': 'U_MCU.4', 'D_RPZ': 'Q_RP.1',
-             'TP_SRVV': 'J_SPWR.1', 'JP_SERVO': 'J_SPWR.2', 'U_VB4': 'J_AIPWR.1', 'TP_SRVG': 'J_SPWR.4', 'TP_AI5V': 'J_AIPWR.1', 'TP_AIGND': 'J_AIPWR.4'})
+             'TP_SRVV': 'J_SPWR.1', 'JP_MATEK': 'J_MATEK.1', 'JP_SERVO': 'J_SPWR.2', 'U_VB4': 'J_AIPWR.1', 'TP_SRVG': 'J_SPWR.4', 'TP_AI5V': 'J_AIPWR.1', 'TP_AIGND': 'J_AIPWR.4'})
 
 
 def load_fp(spec):

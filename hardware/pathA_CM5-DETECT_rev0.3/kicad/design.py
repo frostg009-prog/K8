@@ -333,6 +333,10 @@ Cap('47uF 16V', 'VSERVO', fp=C1210)
 for i in range(1, 7):
     add('H%d' % i, 'MountingHole:MountingHole_2.7mm_M2.5_ISO14580', 'M2.5', '', {})
 
+# fiducial marks for automatic assembly (Rezonit): copper dia 1 mm, mask opening dia 2 mm, 3 per side, asymmetric
+for i in range(1, 7):
+    add('FID%d' % i, 'Fiducial:Fiducial_1mm_Mask2mm', 'fiducial', '', {})
+
 # ------------------------------------------------------------------ net classes (Rezonit 4L 1.5 mm, 18 um outer)
 DIFF100 = [n for n in set(v for c in C.values() for v in c['pins'].values()) if n.startswith(('CAM1_D', 'CAM1_C', 'CAM2_D', 'CAM2_C', 'PCIE_CLK', 'PCIE_RX', 'PCIE_TX'))]
 DIFF90 = ['USB1_DP', 'USB1_DN', 'USB2_DP', 'USB2_DN', 'THU_DP', 'THU_DN']

@@ -37,6 +37,10 @@ for fp in b.GetFootprints():
             d = TM(p.GetDrillSizeX())
             r = d / 2 + (1.75 if fp.GetReference() == 'M1' else 0.3)
             ko += '    (keepout "" (circle signal %d %d %d))\n' % (f(2 * r), f(x), -f(y))
+for fp in b.GetFootprints():                 # fiducials: no copper inside the 2 mm mask opening (+0.15)
+    if fp.GetReference().startswith('FID'):
+        x, y = TM(fp.GetPosition().x), TM(fp.GetPosition().y)
+        ko += '    (keepout "" (circle %s %d %d %d))\n' % ('B.Cu' if fp.IsFlipped() else 'F.Cu', f(2.5), f(x), -f(y))
 i = s.index('    (via "Via[0-3]'); s = s[:i] + ko + s[i:]
 open(out, 'w').write(s)
 print('dsn', out, 'protected wires', s.count('(type protect)'), 'wires', s.count('(wire'))

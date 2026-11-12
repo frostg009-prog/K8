@@ -22,7 +22,7 @@ with zipfile.ZipFile(zp, 'w', zipfile.ZIP_DEFLATED) as z:
         z.write(os.path.join(g, f), f)
 pos = os.path.join(out, 'positions_kicad.csv')
 run('kicad-cli', 'pcb', 'export', 'pos', '--format', 'csv', '--units', 'mm', '--side', 'both', '--exclude-dnp', '-o', pos, pcb)
-skip = lambda ref: ref not in C or C[ref].get('dnp') or ref.startswith(('H', 'TP_', 'JP_'))
+skip = lambda ref: ref not in C or C[ref].get('dnp') or ref.startswith(('H', 'TP_', 'JP_', 'FID'))
 with open(os.path.join(out, 'CPL_JLCPCB_rev04.csv'), 'w', newline='') as f:
     w = csv.writer(f); w.writerow(['Designator', 'Mid X', 'Mid Y', 'Layer', 'Rotation'])
     for p in csv.DictReader(open(pos)):

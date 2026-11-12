@@ -78,6 +78,9 @@ for t in B.GetTracks():
         a, c = t.GetStart(), t.GetEnd(); l = LI.get(t.GetLayer())
         if l is None: continue
         for R in (RC, RE): R.line(l, (TM(a.x), TM(a.y)), (TM(c.x), TM(c.y)), TM(t.GetWidth()), n)
+for fp in B.GetFootprints():                 # fiducials: keep the mask opening free of copper
+    if fp.GetReference().startswith('FID'):
+        RC.disc(2 if fp.IsFlipped() else 0, TM(fp.GetPosition().x), TM(fp.GetPosition().y), 1.1, 99998)
 OC, OE = RC.array(), RE.array()
 # In2 is a plane layer: vias may pass through it, but tracks run on In2 only inside the optional IN2_WIN window
 IN2OK = np.zeros((NY, NX), bool)

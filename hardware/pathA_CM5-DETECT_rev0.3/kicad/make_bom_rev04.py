@@ -17,7 +17,7 @@ os.makedirs(out, exist_ok=True)
 
 # hand-placed / not-from-LCSC positions
 NOT_SMT = {'SC1', 'SC2', 'J_BAT'}            # through-hole: wave / hand soldering
-NO_PART = lambda r: r.startswith(('H', 'TP_', 'JP_'))   # holes, test pads, solder jumpers: copper only
+NO_PART = lambda r: r.startswith(('H', 'TP_', 'JP_', 'FID'))   # holes, test pads, solder jumpers: copper only
 
 groups = OrderedDict()
 for ref, c in C.items():

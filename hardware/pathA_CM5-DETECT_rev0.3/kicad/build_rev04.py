@@ -58,7 +58,9 @@ P = {
     'F1': (35.7, 128.3, 90, 'B'), 'Q_RP': (34.4, 111.4, 270, 'B'), 'D_TVS': (24.4, 105.4, 180, 'B'),
     'Q_AUX_OFF': (22.6, 86.5, 0, 'F'),
 }
-WEST_FIXED = {'J_USB1', 'J_MATEK', 'J_GPS', 'J_I2C', 'J_IO', 'J_RTC', 'J_SD', 'H1', 'H3', 'H5'}
+P.update({'FID1': (3.5, 40.0, 0, 'F'), 'FID2': (3.5, 62.0, 0, 'F'), 'FID3': (40.5, 86.5, 0, 'F'),
+          'FID4': (21.0, 60.0, 0, 'B'), 'FID5': (27.0, 18.5, 0, 'B'), 'FID6': (27.0, 135.0, 0, 'B')})
+WEST_FIXED = {'FID1', 'FID2', 'FID3', 'FID4', 'FID5', 'FID6', 'J_USB1', 'J_MATEK', 'J_GPS', 'J_I2C', 'J_IO', 'J_RTC', 'J_SD', 'H1', 'H3', 'H5'}
 P = {k: (v if k in WEST_FIXED else (v[0] + DX,) + tuple(v[1:])) for k, v in P.items()}
 GLOBAL = ('GND', '+5V_CM5', '+3V3_CM5', '+3V3_AON', '+5V_AUX', 'VIN_PROT')
 # extra placement hints (ref -> 'REF.pad') on top of design.NEAR

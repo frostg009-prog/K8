@@ -74,6 +74,7 @@ def run(*a, **k):
     return {n: (s, e) for n, s, e in pair(*a, **k)}
 
 
+DX = 3.0      # board widened in rev0.4b: CM5 and everything right of it moved +DX
 W100, G100 = 0.13, 0.17
 W90, G90 = 0.17, 0.15
 DV = 0.29            # half distance between the two vias of a pair (0.45 mm vias, 0.13 mm gap)
@@ -85,7 +86,7 @@ for lane, yc, xc, pn, pp, cn, cp in [('D0', 35.7, 35.0, '115', '117', '2', '3'),
                                      ('D3', 40.5, 29.0, '139', '141', '14', '15')]:
     N, P = 'CAM1_%s_N' % lane, 'CAM1_%s_P' % lane
     xc = (PAD[('J_CAM1', cn)][0] + PAD[('J_CAM1', cp)][0]) / 2
-    c = [(36.75, yc), (xc + 0.6, yc), (xc, yc - 0.6), (xc, 8.35)]
+    c = [(36.75 + DX, yc), (xc + 0.6, yc), (xc, yc - 0.6), (xc, 8.35)]
     # heading west: N is the northern (right-hand) track
     run(P, N, 'F', c, W100, G100,
         pre={N: [PAD[('M1', pn)]], P: [PAD[('M1', pp)]]},
@@ -95,27 +96,28 @@ for lane, yc, xc, pn, pp, cn, cp in [('D0', 47.7, 16.5, '175', '177', '2', '3'),
                                      ('C', 50.1, 13.5, '187', '189', '8', '9'), ('D2', 51.3, 12.0, '193', '195', '11', '12')]:
     N, P = 'CAM2_%s_N' % lane, 'CAM2_%s_P' % lane
     xc = (PAD[('J_CAM2', cn)][0] + PAD[('J_CAM2', cp)][0]) / 2
-    c = [(36.75, yc), (xc + 0.6, yc), (xc, yc - 0.6), (xc, 8.35)]
+    c = [(36.75 + DX, yc), (xc + 0.6, yc), (xc, yc - 0.6), (xc, 8.35)]
     run(P, N, 'F', c, W100, G100,
         pre={N: [PAD[('M1', pn)]], P: [PAD[('M1', pp)]]},
         post={N: [(xc + 0.25, 7.95), PAD[('J_CAM2', cn)]], P: [(xc - 0.25, 7.95), PAD[('J_CAM2', cp)]]})
 # CAM2 D3 sits on the outer row: leave through the channel between the two pad rows, round the connector end
 N, P = 'CAM2_D3_N', 'CAM2_D3_P'
 xc = (PAD[('J_CAM2', '14')][0] + PAD[('J_CAM2', '15')][0]) / 2
-c = [(39.4, 51.75), (39.4, 52.6), (39.0, 53.0), (xc + 0.6, 53.0), (xc, 52.4), (xc, 8.35)]
+c = [(39.4 + DX, 51.75), (39.4 + DX, 52.6), (39.0 + DX, 53.0), (xc + 0.6, 53.0), (xc, 52.4), (xc, 8.35)]
 # heading south in the channel: P east (left of travel), N west
 pN, pP = PAD[('M1', '194')], PAD[('M1', '196')]
 run(P, N, 'F', c, W100, G100,
-    pre={N: [pN, (39.25, pN[1])], P: [pP, (39.55, pP[1])]},
+    pre={N: [pN, (39.25 + DX, pN[1])], P: [pP, (39.55 + DX, pP[1])]},
     post={N: [(xc + 0.25, 7.95), PAD[('J_CAM2', '14')]], P: [(xc - 0.25, 7.95), PAD[('J_CAM2', '15')]]})
 # ---------------------------------------------------------------- PCIe (top: east strip north; vias; bottom: west, north to FFC)
 for name, yp, x0, xs, yv, yw, pinp, pinn, cp, cn in [('CLK', 34.5, 41.77, 41.385, 13.5, 12.7, '110', '112', '4', '5'),
                                                      ('RX', 35.7, 42.52, 42.285, 12.5, 11.7, '116', '118', '7', '8'),
                                                      ('TX', 36.9, 43.27, 43.185, 11.5, 10.7, '122', '124', '10', '11')]:
     P, N = 'PCIE_%s_P' % name, 'PCIE_%s_N' % name
+    x0, xs = x0 + DX, xs + DX
     xd = (PAD[('J_PCIE', cp)][0] + PAD[('J_PCIE', cn)][0]) / 2
     yj = {'CLK': 14.75, 'RX': 14.3, 'TX': 14.0}[name]      # staggered jogs keep the pair-to-pair gap
-    c = [(41.0, yp), (x0 - 0.35, yp), (x0, yp - 0.35), (x0, yj), (xs, yj - (x0 - xs)), (xs, yv + 0.5)]
+    c = [(41.0 + DX, yp), (x0 - 0.35, yp), (x0, yp - 0.35), (x0, yj), (xs, yj - (x0 - xs)), (xs, yv + 0.5)]
     # heading east: P is the northern (left-hand) track; after the left turn P runs on the west
     e = run(P, N, 'F', c, W100, G100, pre={P: [PAD[('M1', pinp)]], N: [PAD[('M1', pinn)]]},
             post={P: [(xs - DV, yv)], N: [(xs + DV, yv)]})
@@ -126,18 +128,18 @@ for name, yp, x0, xs, yv, yw, pinp, pinn, cp, cn in [('CLK', 34.5, 41.77, 41.385
 # ---------------------------------------------------------------- USB2 host (CM5 USB3-0 D+/D-): top layer only
 P, N = 'USB2_DP', 'USB2_DN'
 pP, pN = PAD[('M1', '134')], PAD[('M1', '136')]
-c = [(41.1, 39.3), (41.45, 39.3), (41.8, 39.65), (41.8, 68.2), (41.4, 68.6), (36.6, 68.6), (36.2, 69.0), (36.2, 74.6), (36.6, 75.0), (36.95, 75.0)]
+c = [(x + DX, y) for x, y in [(41.1, 39.3), (41.45, 39.3), (41.8, 39.65), (41.8, 68.2), (41.4, 68.6), (36.6, 68.6), (36.2, 69.0), (36.2, 74.6), (36.6, 75.0), (36.95, 75.0)]]
 # heading east: DP north = left
 run(P, N, 'F', c, W90, G90, pre={P: [pP], N: [pN]}, post={P: [PAD[('J_USB2', 'B6')]], N: [PAD[('J_USB2', 'A7')]]})
 # ---------------------------------------------------------------- USB1 device (CM5 USB2 OTG): top stub, bottom run, top landing
 P, N = 'USB1_DP', 'USB1_DN'
 pN, pP = PAD[('M1', '103')], PAD[('M1', '105')]
-xv, yv = 36.3, 32.15
+xv, yv = 36.3 + DX, 32.15
 # heading north: DN east (right), DP west (left)
 poly(N, 'F', [pN, (xv + 0.16, pN[1]), (xv + 0.16, yv + 0.45), (xv + DV, yv)], W90)
 poly(P, 'F', [pP, (xv - 0.16, pP[1]), (xv - 0.16, yv + 0.45), (xv - DV, yv)], W90)
 via(P, (xv - DV, yv)); via(N, (xv + DV, yv))
-x2 = 19.2
+x2 = 19.2 + DX
 c = [(xv, yv - 0.45), (xv, 31.3), (xv - 0.4, 30.9), (x2 + 0.4, 30.9), (x2, 31.3), (x2, 71.0)]
 run(P, N, 'B', c, W90, G90, pre={P: [(xv - DV, yv)], N: [(xv + DV, yv)]}, post={P: [(x2 + DV, 71.45)], N: [(x2 - DV, 71.45)]})
 via(P, (x2 + DV, 71.45)); via(N, (x2 - DV, 71.45))
@@ -148,15 +150,15 @@ run(P, N, 'F', c, W90, G90, pre={P: [(x2 + DV, 71.45)], N: [(x2 - DV, 71.45)]},
 # ---------------------------------------------------------------- thermal camera USB (CM5 USB3-1 D+/D-): via at the pads, bottom run
 P, N = 'THU_DP', 'THU_DN'
 pP, pN = PAD[('M1', '163')], PAD[('M1', '165')]
-xv = 36.35
-poly(P, 'F', [pP, (36.9, pP[1]), (xv, 45.3 - DV)], W90)
-poly(N, 'F', [pN, (36.9, pN[1]), (xv, 45.3 + DV)], W90)
+xv = 36.35 + DX
+poly(P, 'F', [pP, (36.9 + DX, pP[1]), (xv, 45.3 - DV)], W90)
+poly(N, 'F', [pN, (36.9 + DX, pN[1]), (xv, 45.3 + DV)], W90)
 via(P, (xv, 45.3 - DV)); via(N, (xv, 45.3 + DV))
-xs = 34.8
-c = [(xv - 0.45, 45.3), (xs + 0.4, 45.3), (xs, 45.7), (xs, 90.7), (xs + 0.4, 91.1), (37.0, 91.1)]
+xs = 34.8 + DX
+c = [(xv - 0.45, 45.3), (xs + 0.4, 45.3), (xs, 45.7), (xs, 90.7), (xs + 0.4, 91.1), (37.0 + DX, 91.1)]
 # heading west: DP north = right
 run(N, P, 'B', c, W90, G90, pre={P: [(xv, 45.3 - DV)], N: [(xv, 45.3 + DV)]},
-    post={P: [(37.5, PAD[('J_THU', '3')][1]), PAD[('J_THU', '3')]], N: [(37.5, PAD[('J_THU', '2')][1]), PAD[('J_THU', '2')]]})
+    post={P: [(37.5 + DX, PAD[('J_THU', '3')][1]), PAD[('J_THU', '3')]], N: [(37.5 + DX, PAD[('J_THU', '2')][1]), PAD[('J_THU', '2')]]})
 B.Save(out)
 rep = {}
 for n in sorted(LEN):

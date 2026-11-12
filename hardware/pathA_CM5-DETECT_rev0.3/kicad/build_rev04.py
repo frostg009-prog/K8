@@ -10,14 +10,15 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
 from design import C, NEAR, DIFF100, DIFF90, POWER_HI, POWER_MID
 
-W, L = 44.0, 138.0
+DX = 3.0                 # rev0.4b: board widened by DX; everything except the west-edge parts shifts right by DX
+W, L = 44.0 + DX, 138.0
 VIA = (0.45, 0.2)
 FM = pcbnew.FromMM
 TM = pcbnew.ToMM
 V = lambda x, y: pcbnew.VECTOR2I(FM(x), FM(y))
 LIBS = {'CM5IO': HERE + '/lib/CM5IO.pretty', 'lcsc': HERE + '/lib/lcsc.pretty', 'custom': HERE + '/lib/custom.pretty'}
-MOD = (1.9, 12.4, 42.1, 67.6)          # CM5 module outline on the top side (no top parts under it)
-MODHOLES = [(5.5, 16.0), (38.5, 16.0), (5.5, 64.0), (38.5, 64.0)]
+MOD = (1.9 + DX, 12.4, 42.1 + DX, 67.6)          # CM5 module outline on the top side (no top parts under it)
+MODHOLES = [(5.5 + DX, 16.0), (38.5 + DX, 16.0), (5.5 + DX, 64.0), (38.5 + DX, 64.0)]
 
 # ------------------------------------------------------------------ explicit placement: ref -> (x, y, rot, side)
 # connectors on a board edge are given as (x, y, opening direction, side): rotation is derived (pads inboard)
@@ -57,6 +58,8 @@ P = {
     'F1': (35.7, 128.3, 90, 'B'), 'Q_RP': (34.4, 111.4, 270, 'B'), 'D_TVS': (24.4, 105.4, 180, 'B'),
     'Q_AUX_OFF': (22.6, 86.5, 0, 'F'),
 }
+WEST_FIXED = {'J_USB1', 'J_MATEK', 'J_GPS', 'J_I2C', 'J_IO', 'J_RTC', 'J_SD', 'H1', 'H3', 'H5'}
+P = {k: (v if k in WEST_FIXED else (v[0] + DX,) + tuple(v[1:])) for k, v in P.items()}
 GLOBAL = ('GND', '+5V_CM5', '+3V3_CM5', '+3V3_AON', '+5V_AUX', 'VIN_PROT')
 # extra placement hints (ref -> 'REF.pad') on top of design.NEAR
 HINT = dict(NEAR)
@@ -345,13 +348,13 @@ def main(out):
 
 
 # In2 power islands (the rest of In2 is GND). High-speed pairs on the bottom layer never cross an island edge.
-PLANE_ISLANDS = {
+PLANE_ISLANDS0 = {
     '+5V_CM5': [(0.6, 44.0), (16.5, 44.0), (16.5, 131.0), (0.6, 131.0)],
     '+5V_AUX': [(36.3, 34.0), (43.4, 34.0), (43.4, 108.0), (36.3, 108.0), (36.3, 93.5), (39.5, 93.5), (39.5, 88.0), (36.3, 88.0)],
     'VIN_PROT': [(17.5, 84.5), (33.5, 84.5), (33.5, 103.0), (39.0, 103.0), (39.0, 109.0), (17.5, 109.0)],
 }
 # routing corridors kept free of auto-placed parts: (side, [x0, y0, x1, y1, name])
-KEEP = [
+KEEP0 = [
     ('B', [18.2, 30.4, 37.3, 32.6, 'USB1.bot']), ('B', [18.2, 30.4, 20.2, 72.5, 'USB1.bot']),
     ('F', [6.9, 74.3, 20.2, 75.7, 'USB1.top']), ('F', [18.2, 68.0, 20.2, 75.7, 'USB1.top']),
     ('B', [34.0, 44.0, 35.6, 92.5, 'THU.bot']), ('B', [34.0, 88.5, 37.5, 92.5, 'THU.bot']),
@@ -359,6 +362,9 @@ KEEP = [
     ('F', [27.5, 7.7, 37.4, 12.3, 'CAM1.top']), ('F', [9.2, 7.7, 19.2, 12.3, 'CAM2.top']), ('F', [40.9, 10.0, 43.7, 12.4, 'PCIE.top']),
     ('B', [28.0, 7.2, 43.6, 14.6, 'PCIE.bot']), ('F', [12.8, 83.4, 17.2, 88.6, 'B1_SW']), ('F', [26.8, 100.9, 31.2, 106.1, 'B2_SW']),
 ]
+
+PLANE_ISLANDS = {k: [((x + DX) if x > 1.0 else x, y) for x, y in v] for k, v in PLANE_ISLANDS0.items()}
+KEEP = [(sd, [b[0] + DX, b[1], b[2] + DX, b[3], b[4]]) for sd, b in KEEP0]
 
 if __name__ == '__main__':
     errs = main(sys.argv[1] if len(sys.argv) > 1 else HERE + '/CM5-DETECT_rev04_placed.kicad_pcb')

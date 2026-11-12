@@ -15,6 +15,7 @@ for fp in B.GetFootprints():
         if p.GetNetname():
             PAD[(fp.GetReference(), p.GetNumber())] = (TM(p.GetPosition().x), TM(p.GetPosition().y))
 LEN = {}
+PADSET = set(PAD.values())
 
 
 def seg(net, layer, a, b, w):
@@ -63,11 +64,19 @@ def pair(left_net, right_net, layer, center, w, gap, pre=None, post=None):
     for net, sgn in ((left_net, 1), (right_net, -1)):
         pts = offset(center, sgn * d)
         if pre and net in pre:
-            pts = list(pre[net]) + pts
+            pts = ([snap(pre[net][0], pts, 0)] if pre[net][0] == 'snap' or len(pre[net]) == 1 and pre[net][0] in PADSET else list(pre[net])) + pts
         if post and net in post:
-            pts = pts + list(post[net])
+            pts = pts + ([snap(post[net][-1], pts, 1)] if post[net][-1] in PADSET else list(post[net]))
         poly(net, layer, pts, w)
         yield net, pts[0], pts[-1]
+
+
+def snap(pad, pts, end):
+    """point on the pad lying on the track's own line (no flare: constant gap up to the pad)"""
+    a, b = (pts[0], pts[1]) if end == 0 else (pts[-1], pts[-2])
+    if abs(a[1] - b[1]) < 1e-6:          # horizontal track
+        return (pad[0], a[1])
+    return (a[0], pad[1])
 
 
 def run(*a, **k):
@@ -90,7 +99,7 @@ for lane, yc, xc, pn, pp, cn, cp in [('D0', 35.7, 35.0, '115', '117', '2', '3'),
     # heading west: N is the northern (right-hand) track
     run(P, N, 'F', c, W100, G100,
         pre={N: [PAD[('M1', pn)]], P: [PAD[('M1', pp)]]},
-        post={N: [(xc + 0.25, 7.95), PAD[('J_CAM1', cn)]], P: [(xc - 0.25, 7.95), PAD[('J_CAM1', cp)]]})
+        post={N: [PAD[('J_CAM1', cn)]], P: [PAD[('J_CAM1', cp)]]})
 # ---------------------------------------------------------------- CAM2 (top layer)
 CAM2_S, CAM2_YJ = 8.0, 10.6
 for lane, yc, xc, pn, pp, cn, cp in [('D0', 47.7, 16.5, '175', '177', '2', '3'), ('D1', 48.9, 15.0, '181', '183', '5', '6'),
@@ -101,7 +110,7 @@ for lane, yc, xc, pn, pp, cn, cp in [('D0', 47.7, 16.5, '175', '177', '2', '3'),
     c = [(36.75 + DX, yc), (xv + 0.6, yc), (xv, yc - 0.6), (xv, CAM2_YJ + CAM2_S), (xc, CAM2_YJ), (xc, 8.35)]
     run(P, N, 'F', c, W100, G100,
         pre={N: [PAD[('M1', pn)]], P: [PAD[('M1', pp)]]},
-        post={N: [(xc + 0.25, 7.95), PAD[('J_CAM2', cn)]], P: [(xc - 0.25, 7.95), PAD[('J_CAM2', cp)]]})
+        post={N: [PAD[('J_CAM2', cn)]], P: [PAD[('J_CAM2', cp)]]})
 # CAM2 D3 sits on the outer row: leave through the channel between the two pad rows, round the connector end
 N, P = 'CAM2_D3_N', 'CAM2_D3_P'
 xc = (PAD[('J_CAM2', '14')][0] + PAD[('J_CAM2', '15')][0]) / 2
@@ -110,8 +119,8 @@ c = [(39.4 + DX, 51.75), (39.4 + DX, 52.6), (39.0 + DX, 53.0), (xv + 0.6, 53.0),
 # heading south in the channel: P east (left of travel), N west
 pN, pP = PAD[('M1', '194')], PAD[('M1', '196')]
 run(P, N, 'F', c, W100, G100,
-    pre={N: [pN, (39.25 + DX, pN[1])], P: [pP, (39.55 + DX, pP[1])]},
-    post={N: [(xc + 0.25, 7.95), PAD[('J_CAM2', '14')]], P: [(xc - 0.25, 7.95), PAD[('J_CAM2', '15')]]})
+    pre={N: [(pN[0], 51.15), (39.25 + DX, 51.15)], P: [(pP[0], 51.45), (39.55 + DX, 51.45)]},
+    post={N: [PAD[('J_CAM2', '14')]], P: [PAD[('J_CAM2', '15')]]})
 # ---------------------------------------------------------------- PCIe (top: east strip north; vias; bottom: west, north to FFC)
 for name, yp, x0, xs, yv, yw, pinp, pinn, cp, cn in [('CLK', 34.5, 41.77, 41.385, 13.5, 12.7, '110', '112', '4', '5'),
                                                      ('RX', 35.7, 42.52, 42.285, 12.5, 11.7, '116', '118', '7', '8'),
@@ -127,7 +136,7 @@ for name, yp, x0, xs, yv, yw, pinp, pinn, cp, cn in [('CLK', 34.5, 41.77, 41.385
     via(P, (xs - DV, yv)); via(N, (xs + DV, yv))
     c = [(xs, yv - 0.45), (xs, yw + 0.35), (xs - 0.35, yw), (xd + 0.5, yw), (xd, yw - 0.5), (xd, 7.75)]
     run(P, N, 'B', c, W100, G100, pre={P: [(xs - DV, yv)], N: [(xs + DV, yv)]},
-        post={P: [(xd - 0.25, 7.35), PAD[('J_PCIE', cp)]], N: [(xd + 0.25, 7.35), PAD[('J_PCIE', cn)]]})
+        post={P: [PAD[('J_PCIE', cp)]], N: [PAD[('J_PCIE', cn)]]})
 # ---------------------------------------------------------------- USB2 host (CM5 USB3-0 D+/D-): top layer only
 P, N = 'USB2_DP', 'USB2_DN'
 pP, pN = PAD[('M1', '134')], PAD[('M1', '136')]
@@ -139,8 +148,9 @@ P, N = 'USB1_DP', 'USB1_DN'
 pN, pP = PAD[('M1', '103')], PAD[('M1', '105')]
 xv, yv = 36.3 + DX, 32.15
 # heading north: DN east (right), DP west (left)
-poly(N, 'F', [pN, (xv + 0.16, pN[1]), (xv + 0.16, yv + 0.45), (xv + DV, yv)], W90)
-poly(P, 'F', [pP, (xv - 0.16, pP[1]), (xv - 0.16, yv + 0.45), (xv - DV, yv)], W90)
+yc_ = (pN[1] + pP[1]) / 2
+poly(N, 'F', [(pN[0], yc_ - 0.16), (xv + 0.16, yc_ - 0.16), (xv + 0.16, yv + 0.45), (xv + DV, yv)], W90)
+poly(P, 'F', [(pP[0], yc_ + 0.16), (xv - 0.16, yc_ + 0.16), (xv - 0.16, yv + 0.45), (xv - DV, yv)], W90)
 via(P, (xv - DV, yv)); via(N, (xv + DV, yv))
 x2 = 19.2 + DX
 c = [(xv, yv - 0.45), (xv, 31.3), (xv - 0.4, 30.9), (x2 + 0.4, 30.9), (x2, 31.3), (x2, 71.0)]
@@ -154,8 +164,8 @@ run(P, N, 'F', c, W90, G90, pre={P: [(x2 + DV, 71.45)], N: [(x2 - DV, 71.45)]},
 P, N = 'THU_DP', 'THU_DN'
 pP, pN = PAD[('M1', '163')], PAD[('M1', '165')]
 xv = 36.35 + DX
-poly(P, 'F', [pP, (36.9 + DX, pP[1]), (xv, 45.3 - DV)], W90)
-poly(N, 'F', [pN, (36.9 + DX, pN[1]), (xv, 45.3 + DV)], W90)
+poly(P, 'F', [(pP[0], 45.3 - 0.16), (36.9 + DX, 45.3 - 0.16), (xv, 45.3 - DV)], W90)
+poly(N, 'F', [(pN[0], 45.3 + 0.16), (36.9 + DX, 45.3 + 0.16), (xv, 45.3 + DV)], W90)
 via(P, (xv, 45.3 - DV)); via(N, (xv, 45.3 + DV))
 xs = 34.8 + DX
 c = [(xv - 0.45, 45.3), (xs + 0.4, 45.3), (xs, 45.7), (xs, 90.7), (xs + 0.4, 91.1), (37.0 + DX, 91.1)]

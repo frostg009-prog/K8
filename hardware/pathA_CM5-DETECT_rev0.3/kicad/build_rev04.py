@@ -61,7 +61,8 @@ GLOBAL = ('GND', '+5V_CM5', '+3V3_CM5', '+3V3_AON', '+5V_AUX', 'VIN_PROT')
 # extra placement hints (ref -> 'REF.pad') on top of design.NEAR
 HINT = dict(NEAR)
 HINT.update({'TP_GND': 'U_MCU.7', 'TP_3V3': 'U_MCU.9', 'TP_5V': 'U_AON.1', 'TP_VIN': 'D_B1IN.2', 'TP_5VA': 'L_B2.2',
-             'TP_SWIO': 'U_MCU.18', 'TP_RST': 'U_MCU.4', 'D_RPZ': 'Q_RP.1'})
+             'TP_SWIO': 'U_MCU.18', 'TP_RST': 'U_MCU.4', 'D_RPZ': 'Q_RP.1',
+             'TP_SRVV': 'J_SPWR.1', 'TP_SRVG': 'J_SPWR.4', 'TP_AI5V': 'J_AIPWR.1', 'TP_AIGND': 'J_AIPWR.4'})
 
 
 def load_fp(spec):

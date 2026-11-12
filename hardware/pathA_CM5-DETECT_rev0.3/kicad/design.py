@@ -72,6 +72,10 @@ SOT236 = 'Package_TO_SOT_SMD:SOT-23-6'
 # LCSC codes: verify stock before ordering.
 GH = lambda n: 'Connector_JST:JST_SH_SM%02dB-SRSS-TB_1x%02d-1MP_P1.00mm_Horizontal' % (n, n)
 GH_LCSC = {2: 'C160402', 3: 'C160403', 4: 'C160404', 6: 'C160406', 8: 'C160408'}
+# power inputs/outputs keep latching JST-GH 1.25 mm (SM04B-GHS-TB) + wire solder pads (customer request)
+GHL = lambda n: 'Connector_JST:JST_GH_SM%02dB-GHS-TB_1x%02d-1MP_P1.25mm_Horizontal' % (n, n)
+GHL_LCSC = {4: 'C189895'}
+WPAD = 'TestPoint:TestPoint_Pad_2.5x2.5mm'
 
 _n = {'R': 0, 'C': 0}
 
@@ -234,8 +238,9 @@ add('J_PCIE', 'Connector_FFC-FPC:Hirose_FH12-16S-0.5SH_1x16-1MP_P0.50mm_Horizont
      15: 'PCIE_CLKREQ_N', 16: 'PCIE_RST_N', 'MP': 'GND'}, 'FFC <= 50 mm, 90 ohm, alt HCTL XW05202-160R-00')
 add('U_VB4', SOT235, 'SY6280AAC 5V for AI board 2A', 'C55136', {1: '+5V_AI', 2: 'GND', 3: 'VB4_ISET', 4: '+5V_AUX', 5: '+5V_AUX'})
 R('3.4k', 'VB4_ISET', 'GND', note='2.0 A'); Cap('22uF', '+5V_AI', fp=C0805)
-add('J_AIPWR', GH(4), 'AI POWER 5V (5V,5V,GND,GND) for Hailo HAT', GH_LCSC[4],
+add('J_AIPWR', GHL(4), 'AI POWER 5V (5V,5V,GND,GND) JST-GH for Hailo HAT', GHL_LCSC[4],
     {1: '+5V_AI', 2: '+5V_AI', 3: 'GND', 4: 'GND', 'MP': 'GND'})
+add('TP_AI5V', WPAD, 'wire pad AI +5V', '', {1: '+5V_AI'}); add('TP_AIGND', WPAD, 'wire pad AI GND', '', {1: 'GND'})
 
 # ===================================================================== cameras (identical connectors)
 FH22 = 'Connector_FFC-FPC:Hirose_FH12-22S-0.5SH_1x22-1MP_P0.50mm_Horizontal'
@@ -318,7 +323,8 @@ add('J_RTC', GH(2), 'RTC battery 3V (+,-)', GH_LCSC[2], {1: 'VBAT_RTC', 2: 'GND'
 for i in range(1, 5):
     add('J_S%d' % i, GH(3), 'SERVO%d (SIG,V+,GND)' % i, GH_LCSC[3], {1: 'SERVO%d' % i, 2: 'VSERVO', 3: 'GND', 'MP': 'GND'})
     R('220R', 'SERVO%d_G' % i, 'SERVO%d' % i, note='servo signal series R')
-add('J_SPWR', GH(4), 'SERVO POWER IN from BEC (V+,V+,GND,GND)', GH_LCSC[4], {1: 'VSERVO', 2: 'VSERVO', 3: 'GND', 4: 'GND', 'MP': 'GND'})
+add('J_SPWR', GHL(4), 'SERVO POWER IN from BEC (V+,V+,GND,GND) JST-GH', GHL_LCSC[4], {1: 'VSERVO', 2: 'VSERVO', 3: 'GND', 4: 'GND', 'MP': 'GND'})
+add('TP_SRVV', WPAD, 'wire pad servo V+ (BEC)', '', {1: 'VSERVO'}); add('TP_SRVG', WPAD, 'wire pad servo GND', '', {1: 'GND'})
 add('JP_SERVO', 'Jumper:SolderJumper-2_P1.3mm_Open_RoundedPad1.0x1.5mm', 'close = servos from 5V_AUX (<=1.5 A total)', '',
     {1: 'VSERVO', 2: '+5V_AUX'})
 Cap('47uF 16V', 'VSERVO', fp=C1210)
@@ -331,8 +337,8 @@ for i in range(1, 7):
 DIFF100 = [n for n in set(v for c in C.values() for v in c['pins'].values()) if n.startswith(('CAM1_D', 'CAM1_C', 'CAM2_D', 'CAM2_C', 'PCIE_CLK', 'PCIE_RX', 'PCIE_TX'))]
 DIFF90 = ['USB1_DP', 'USB1_DN', 'USB2_DP', 'USB2_DN', 'THU_DP', 'THU_DN']
 POWER_HI = ['VBAT_RAW', 'VBAT_F', 'VIN_PROT', 'VIN_B1', '+5V_CM5', '+5V_AUX', 'B1_SW', 'B2_SW', 'HB_SW', 'VSCAP',
-            'GND', 'SCAP_MID', 'SCAP_CHG']
-POWER_MID = ['+5V_AI', 'VBUS1', 'VBUS2', 'VBUS3', 'VSERVO', '+3V3_CAM', '+3V3_CM5', '+3V3_AON', 'C33_LX', 'SD_VDD', 'MATEK_5V']
+            'GND', 'SCAP_MID', 'SCAP_CHG', 'VSERVO']
+POWER_MID = ['+5V_AI', 'VBUS1', 'VBUS2', 'VBUS3', '+3V3_CAM', '+3V3_CM5', '+3V3_AON', 'C33_LX', 'SD_VDD', 'MATEK_5V']
 
 if __name__ == '__main__':
     nets = sorted(set(v for c in C.values() for v in c['pins'].values() if v))

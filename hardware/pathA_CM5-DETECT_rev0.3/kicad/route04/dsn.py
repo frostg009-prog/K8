@@ -6,10 +6,23 @@ import sys, re, pcbnew
 src, out = sys.argv[1:3]
 b = pcbnew.LoadBoard(src)
 TM = pcbnew.ToMM
-bb = b.GetBoardEdgesBoundingBox(); W, L = TM(bb.GetWidth()), TM(bb.GetHeight())
+W, L = 44.0, 138.0
 tmp = out + '.raw'
 assert pcbnew.ExportSpecctraDSN(b, tmp)
 s = open(tmp).read()
+# outer pours are added after routing: drop their plane records (balanced-paren scan)
+for lay in ('F.Cu', 'B.Cu'):
+    while True:
+        i = s.find('(plane GND (polygon %s' % lay)
+        if i < 0: break
+        dep, j = 0, i
+        while True:
+            if s[j] == '(': dep += 1
+            elif s[j] == ')':
+                dep -= 1
+                if dep == 0: break
+            j += 1
+        s = s[:i] + s[j + 1:]
 for l in ('In1.Cu', 'In2.Cu'):
     s = s.replace('(layer %s\n      (type signal)' % l, '(layer %s\n      (type power)' % l)
 f = lambda v: int(round(v * 1000))

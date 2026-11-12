@@ -1,0 +1,24 @@
+Outer size  49.6 x 143.6 x 28.5 mm
+base: watertight=True volume=20.8 cm3 ; lid: watertight=True volume=24.4 cm3
+board bottom z=8.0, board top z=9.5, split z=13.5
+J_USB2   E-wall  F side  z 7.7..14.7
+J_CAM2   N-wall  F side  z 9.3..12.1
+J_BAT    S-wall  F side  z 9.3..18.3
+J_USB1   W-wall  F side  z 7.7..14.7
+J_CAM1   N-wall  F side  z 9.3..12.1
+J_AIPWR  S-wall  B side  z 3.2..8.2
+J_THU    E-wall  B side  z 4.6..8.2
+J_I2C    W-wall  B side  z 4.6..8.2
+J_THA    S-wall  B side  z 4.6..8.2
+J_MATEK  W-wall  B side  z 4.6..8.2
+J_S3     E-wall  B side  z 4.6..8.2
+J_RTC    E-wall  B side  z 4.6..8.2
+J_S1     E-wall  B side  z 4.6..8.2
+J_SPWR   W-wall  B side  z 3.2..8.2
+J_S4     E-wall  B side  z 4.6..8.2
+J_PCIE   N-wall  B side  z 5.4..8.2
+J_IO     W-wall  B side  z 4.6..8.2
+J_S2     E-wall  B side  z 4.6..8.2
+J_GPS    W-wall  B side  z 4.6..8.2
+J_FAN    E-wall  B side  z 4.6..8.2
+J_SD     W-wall  B side  z 5.8..8.2

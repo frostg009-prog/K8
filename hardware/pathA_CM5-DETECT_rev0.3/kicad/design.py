@@ -50,6 +50,7 @@ for g, n in GPIO_NET.items():
     cm5[str(GPIO_PIN[g])] = n
 
 C = {}   # ref -> dict(fp=, val=, lcsc=, pins={}, note=, dnp=False)
+NEAR = {}   # ref -> 'REF.pad' placement hint (decoupling caps etc.), used by build_rev04.py
 
 
 def add(ref, fp, val, lcsc, pins, note='', dnp=False):
@@ -73,19 +74,21 @@ GH_LCSC = {2: 'C189893', 3: 'C514175', 4: 'C189895', 6: 'C133065', 8: 'C42376901
 _n = {'R': 0, 'C': 0}
 
 
-def R(val, a, b, lcsc='', note='', fp=R0402, dnp=False, ref=None):
+def R(val, a, b, lcsc='', note='', fp=R0402, dnp=False, ref=None, near=None):
     if ref is None:
         _n['R'] += 1
         ref = 'R%d' % _n['R']
     add(ref, fp, val, lcsc or RLCSC.get(val, ''), {1: a, 2: b}, note, dnp)
+    if near: NEAR[ref] = near
     return ref
 
 
-def Cap(val, a, b='GND', fp=C0402, lcsc='', note='', ref=None):
+def Cap(val, a, b='GND', fp=C0402, lcsc='', note='', ref=None, near=None):
     if ref is None:
         _n['C'] += 1
         ref = 'C%d' % _n['C']
     add(ref, fp, val, lcsc or CLCSC.get((val, fp), ''), {1: a, 2: b}, note)
+    if near: NEAR[ref] = near
     return ref
 
 
@@ -105,15 +108,14 @@ add('M1', 'CM5IO:Raspberry-Pi-5-Compute-Module', 'Raspberry Pi CM5 (CM5108032 / 
     'Two 100-pin board-to-board connectors are soldered at the factory; CM5 is plugged in and screwed (4xM2.5)')
 R('0R', 'GPIO_VREF', '+3V3_CM5', note='GPIO bank voltage = 3.3 V', ref='R_VREF')
 for i in range(4):
-    Cap('22uF', '+5V_CM5', fp=C0805, lcsc='C45783', note='CM5 5V input bulk')
-Cap('100nF', '+5V_CM5'); Cap('100nF', '+5V_CM5')
-Cap('10uF', '+3V3_CM5', fp=C0805)
+    Cap('22uF', '+5V_CM5', fp=C0805, lcsc='C45783', note='CM5 5V input bulk', near='M1.81')
+Cap('100nF', '+5V_CM5', near='M1.79'); Cap('100nF', '+5V_CM5', near='M1.85')
+Cap('10uF', '+3V3_CM5', fp=C0805, near='M1.84')
 
 # ===================================================================== battery input & protection
 add('J_BAT', 'Connector_AMASS:AMASS_XT60PW-M_1x02_P7.20mm_Horizontal', 'XT60PW-M (battery 3S-6S)', 'C98732',
     {1: 'GND', 2: 'VBAT_RAW'}, 'pad 2 = +, pad 1 = -')
-add('J_BAT2', 'Connector_AMASS:AMASS_XT30PW-M_1x02_P2.50mm_Horizontal', 'XT30PW-M (alternative input)', 'C53373776',
-    {1: 'GND', 2: 'VBAT_RAW'}, 'fit XT60 OR XT30, not both', dnp=True)
+# rev0.4: XT30 alternative footprint (J_BAT2) removed - use an XT60->XT30 adapter lead if needed
 add('F1', 'custom:Fuse_2410', '10A fast 2410 125V', 'C2838934', {1: 'VBAT_RAW', 2: 'VBAT_F'})
 add('D_TVS', 'Diode_SMD:D_SMC', 'SMCJ33A TVS 1.5kW', 'C152083', {1: 'VBAT_F', 2: 'GND'}, 'K=pad1')
 add('Q_RP', 'lcsc:TO-252-2_L6.5-W6.1-P4.58-LS10.0-TL', 'NCE60P12K P-MOS 60V reverse-polarity', 'C326372',
@@ -122,7 +124,7 @@ add('D_RPZ', 'Diode_SMD:D_SOD-123', 'BZT52C12 Vgs clamp', 'C43491', {1: 'VIN_PRO
 R('47k', 'QRP_G', 'GND', note='P-MOS gate pull-down')
 add('C_BULK', 'Capacitor_SMD:CP_Elec_8x10', '100uF 50V low-ESR', 'C48935390', {1: 'VIN_PROT', 2: 'GND'},
     'input damping / hold-up for motor transients')
-Cap('2.2uF 100V', 'VIN_PROT', fp=C1206)
+Cap('2.2uF 100V', 'VIN_PROT', fp=C1206, near='Q_RP.3')
 R('100k', 'VIN_PROT', 'VBAT_SENSE', note='VBAT divider 100k/10k -> MCU ADC (max 36 V)')
 R('10k', 'VBAT_SENSE', 'GND'); Cap('100nF', 'VBAT_SENSE')
 
@@ -136,17 +138,17 @@ def buck(n, vin, vout, en_ctrl=None):
         {1: 'B%d_BOOT' % n, 2: vin, 3: 'B%d_EN' % n, 4: 'B%d_RT' % n, 5: 'B%d_FB' % n, 6: 'B%d_COMP' % n,
          7: 'GND', 8: 'B%d_SW' % n, 9: 'GND'}, '5.09 V / 5 A, 400 kHz, UVLO 7.9 V')
     for _ in range(3):
-        Cap('2.2uF 100V', vin, fp=C1206)
-    Cap('100nF', vin)
-    R('100k', vin, 'B%d_EN' % n, note='UVLO top'); R('18k', 'B%d_EN' % n, 'GND', note='UVLO bottom: 7.9 V on')
+        Cap('2.2uF 100V', vin, fp=C1206, near=u + '.2')
+    Cap('100nF', vin, near=u + '.2')
+    R('100k', vin, 'B%d_EN' % n, note='UVLO top', near=u + '.3'); R('18k', 'B%d_EN' % n, 'GND', note='UVLO bottom: 7.9 V on')
     R('249k', 'B%d_RT' % n, 'GND', note='fsw 400 kHz')
     R('10.5k', 'B%d_COMP' % n, 'B%d_CC' % n); Cap('8.2nF', 'B%d_CC' % n); Cap('100pF', 'B%d_COMP' % n)
     Cap('100nF', 'B%d_BOOT' % n, 'B%d_SW' % n)
     add('L_B%d' % n, 'lcsc:IND-SMD_L7.0-W6.6', '6.8uH 6A FXL0630-6R8-M', 'C167221', {1: 'B%d_SW' % n, 2: vout})
     add('D_B%d' % n, 'Diode_SMD:D_SMC', 'SS510C 5A 100V Schottky', 'C19229', {1: 'B%d_SW' % n, 2: 'GND'}, 'K=pad1')
-    R('53.6k', vout, 'B%d_FB' % n, note='Vout=0.8*(1+53.6/10)=5.09 V'); R('10k', 'B%d_FB' % n, 'GND')
+    R('53.6k', vout, 'B%d_FB' % n, note='Vout=0.8*(1+53.6/10)=5.09 V', near=u + '.5'); R('10k', 'B%d_FB' % n, 'GND')
     for _ in range(3):
-        Cap('47uF 16V', vout, fp=C1210)
+        Cap('47uF 16V', vout, fp=C1210, near='L_B%d.2' % n)
     if en_ctrl:
         add('Q_%s' % en_ctrl, SOT23, '2N7002', 'C8545', {1: en_ctrl, 2: 'GND', 3: 'B%d_EN' % n}, 'MCU can switch rail off')
         R('100k', en_ctrl, 'GND')
@@ -174,24 +176,24 @@ add('U_HB', 'lcsc:VQFN-11_L2.5-W2.0-P0.50-TL_TI_RNR', 'SGM6611C boost 7A (hold-u
     {1: '', 2: 'HB_VCC', 3: 'HB_FB', 4: 'HB_COMP', 5: 'GND', 6: '+5V_CM5', 7: 'HOLD_EN', 8: 'HB_ILIM', 9: 'VSCAP',
      10: 'HB_BOOT', 11: 'HB_SW'})
 add('L_HB', 'lcsc:IND-SMD_L7.1-W6.6_SLO0650H', '2.2uH 9.5A SLO0650H2R2MTT', 'C216163', {1: 'VSCAP', 2: 'HB_SW'})
-Cap('22uF', 'VSCAP', fp=C0805); Cap('22uF', 'VSCAP', fp=C0805)
-Cap('22uF', '+5V_CM5', fp=C0805); Cap('22uF', '+5V_CM5', fp=C0805)
+Cap('22uF', 'VSCAP', fp=C0805, near='L_HB.1'); Cap('22uF', 'VSCAP', fp=C0805, near='U_HB.9')
+Cap('22uF', '+5V_CM5', fp=C0805, near='U_HB.6'); Cap('22uF', '+5V_CM5', fp=C0805, near='U_HB.6')
 Cap('2.2uF', 'HB_VCC'); Cap('100nF', 'HB_BOOT', 'HB_SW')
-R('340k', '+5V_CM5', 'HB_FB', note='Vout=1.205*(1+340/107)=5.03 V'); R('107k', 'HB_FB', 'GND')
+R('340k', '+5V_CM5', 'HB_FB', note='Vout=1.205*(1+340/107)=5.03 V', near='U_HB.3'); R('107k', 'HB_FB', 'GND')
 R('30k', 'HB_COMP', 'HB_CC'); Cap('4.7nF', 'HB_CC')
 R('127k', 'HB_ILIM', 'GND', note='9.5 A peak')
-R('100k', 'HOLD_EN', 'VSCAP', note='hold-up enabled by default')
+R('100k', 'HOLD_EN', 'GND', note='rev0.4: pull-DOWN (was pull-up to VSCAP). Boost runs only while the MCU drives HOLD_EN high, so after the MCU ends hold-up the board stays off instead of restarting until the supercaps are empty', near='U_HB.7')
 
 # ===================================================================== always-on 3.3 V (MCU, LED, temp)
 add('U_AON', SOT235, 'ME6211C33M5G LDO 3.3V', 'C82942', {1: '+5V_CM5', 2: 'GND', 3: '+5V_CM5', 4: '', 5: '+3V3_AON'})
-Cap('1uF', '+5V_CM5', fp=C0603); Cap('1uF', '+3V3_AON', fp=C0603)
+Cap('1uF', '+5V_CM5', fp=C0603, near='U_AON.1'); Cap('1uF', '+3V3_AON', fp=C0603, near='U_AON.5')
 
 # ===================================================================== camera 3.3 V (CM5 3V3 is only 600 mA total)
 add('U_C33', SOT235, 'SY8089A1AAC 2A buck 3.3V cameras', 'C479074',
     {1: '+3V3_CM5', 2: 'GND', 3: 'C33_LX', 4: '+5V_CM5', 5: 'C33_FB'}, 'on only while CM5 is on (EN=CM5 3V3)')
 add('L_C33', 'Inductor_SMD:L_Changjiang_FNR4012S', '2.2uH 2.3A FNR4012S2R2MT', 'C167776', {1: 'C33_LX', 2: '+3V3_CAM'})
-Cap('10uF', '+5V_CM5', fp=C0805); Cap('22uF', '+3V3_CAM', fp=C0805)
-R('45.3k', '+3V3_CAM', 'C33_FB', note='0.6*(1+45.3/10)=3.32 V'); R('10k', 'C33_FB', 'GND')
+Cap('10uF', '+5V_CM5', fp=C0805, near='U_C33.4'); Cap('22uF', '+3V3_CAM', fp=C0805, near='L_C33.2')
+R('45.3k', '+3V3_CAM', 'C33_FB', note='0.6*(1+45.3/10)=3.32 V', near='U_C33.5'); R('10k', 'C33_FB', 'GND')
 
 # ===================================================================== USB-C #1 : PC / firmware / USB gadget
 USBC = 'lcsc:USB-C-SMD_TYPE-C-16PIN-2MD-073'
@@ -250,7 +252,7 @@ cam(1, 'CAM1_SCL', 'CAM1_SDA', 'CAM1_GPIO0', 'CAM1_GPIO1')
 cam(2, 'CAM2_SCL', 'CAM2_SDA', 'CAM2_EN', '')
 R('2.2k', 'CAM2_EN', '+3V3_CAM', note='camera 2 power enable (as CM5IO)')
 R('2.2k', 'CAM2_SCL', '+3V3_CM5'); R('2.2k', 'CAM2_SDA', '+3V3_CM5')
-Cap('10uF', '+3V3_CAM', fp=C0805); Cap('100nF', '+3V3_CAM'); Cap('100nF', '+3V3_CAM')
+Cap('10uF', '+3V3_CAM', fp=C0805, near='J_CAM1.22'); Cap('100nF', '+3V3_CAM', near='J_CAM1.22'); Cap('100nF', '+3V3_CAM', near='J_CAM2.22')
 
 # ===================================================================== microSD (for CM5 Lite)
 add('J_SD', 'lcsc:TF-SMD_TF-01A', 'microSD push-push TF-01A', 'C91145',
@@ -266,7 +268,7 @@ add('U_MCU', 'Package_SO:TSSOP-20_4.4x6.5mm_P0.65mm', 'CH32V003F4P6 supervisor (
      8: 'TEMP_ALERT', 9: '+3V3_AON', 10: 'HEARTBEAT_R', 11: 'PFAIL_R', 12: 'PMIC_OFF', 13: 'PWRBTN_PRESS',
      14: 'VSCAP_SENSE', 15: 'HOLD_EN_R', 16: 'SCAP_CHG_EN', 17: 'AUX_OFF', 18: 'MCU_SWIO', 19: 'CM5_ON_SENSE',
      20: 'WDT_DIS'})
-Cap('100nF', '+3V3_AON'); Cap('1uF', '+3V3_AON', fp=C0603)
+Cap('100nF', '+3V3_AON', near='U_MCU.9'); Cap('1uF', '+3V3_AON', fp=C0603, near='U_MCU.9')
 R('1k', 'MCU_TX_R', 'MCU_TX', note='series: no back-feed when CM5 is off')
 R('1k', 'MCU_RX_R', 'MCU_RX'); R('1k', 'HEARTBEAT_R', 'HEARTBEAT'); R('1k', 'PFAIL_R', 'PFAIL_N')
 R('1k', 'HOLD_EN_R', 'HOLD_EN'); R('10k', 'CM5_ON_SENSE', '+3V3_CM5')
@@ -286,13 +288,14 @@ for tp, net in (('TP_SWIO', 'MCU_SWIO'), ('TP_3V3', '+3V3_AON'), ('TP_GND', 'GND
 # temperature sensor (always-on rail, CM5 I2C1 0x48, ALERT -> MCU)
 add('U_TEMP', 'Package_SO:SOIC-8_3.9x4.9mm_P1.27mm', 'NST175H temp sensor 0x48', 'C917444',
     {1: 'I2C1_SDA', 2: 'I2C1_SCL', 3: 'TEMP_ALERT', 4: 'GND', 5: 'GND', 6: 'GND', 7: 'GND', 8: '+3V3_AON'})
-Cap('100nF', '+3V3_AON')
-R('2.2k', 'I2C1_SDA', '+3V3_CM5'); R('2.2k', 'I2C1_SCL', '+3V3_CM5')
+Cap('100nF', '+3V3_AON', near='U_TEMP.8')
+# rev0.4: CM5 already has 1.8k pull-ups on GPIO2/3 (datasheet) -> external ones are DNP (fit only for long I2C cables)
+R('2.2k', 'I2C1_SDA', '+3V3_CM5', dnp=True, note='DNP: CM5 has internal 1.8k'); R('2.2k', 'I2C1_SCL', '+3V3_CM5', dnp=True, note='DNP: CM5 has internal 1.8k')
 
 # secure element: device keys / disk encryption key (LUKS), BirdWatch licence binding. I2C1 @0x60
 add('U_SEC', 'Package_SO:SOIC-8_3.9x4.9mm_P1.27mm', 'ATECC608B secure element (I2C 0x60)', 'C1518769',
     {1: '', 2: '', 3: '', 4: 'GND', 5: 'I2C1_SDA', 6: 'I2C1_SCL', 7: '', 8: '+3V3_CM5'})
-Cap('100nF', '+3V3_CM5')
+Cap('100nF', '+3V3_CM5', near='U_SEC.8')
 
 # LEDs: PWR (green, always-on), RUN (blue, CM5 GPIO20 low = on), ERR (red, MCU)
 add('D_PWR', LED, 'LED green PWR', 'C12624', {1: 'LEDP_K', 2: '+3V3_AON'}); R('1k', 'LEDP_K', 'GND')
@@ -318,9 +321,9 @@ add('JP_SERVO', 'Jumper:SolderJumper-2_P1.3mm_Open_RoundedPad1.0x1.5mm', 'close 
     {1: 'VSERVO', 2: '+5V_AUX'})
 Cap('47uF 16V', 'VSERVO', fp=C1210)
 
-# mounting holes (board corners)
-for i in range(1, 5):
-    add('H%d' % i, 'MountingHole:MountingHole_2.7mm_M2.5', 'M2.5', '', {})
+# mounting holes M2.5 (rev0.4: 6 holes, none under the CM5 module)
+for i in range(1, 7):
+    add('H%d' % i, 'MountingHole:MountingHole_2.7mm_M2.5_ISO14580', 'M2.5', '', {})
 
 # ------------------------------------------------------------------ net classes (Rezonit 4L 1.5 mm, 18 um outer)
 DIFF100 = [n for n in set(v for c in C.values() for v in c['pins'].values()) if n.startswith(('CAM1_D', 'CAM1_C', 'CAM2_D', 'CAM2_C', 'PCIE_CLK', 'PCIE_RX', 'PCIE_TX'))]

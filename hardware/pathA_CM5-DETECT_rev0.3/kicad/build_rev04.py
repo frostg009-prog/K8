@@ -37,24 +37,24 @@ P = {
     # ---- bottom side: edge connectors
     'J_PCIE': (31.5, 4.6, 'N', 'B'), 'J_SD': (10.15, 27.8, 90, 'B'),
     'J_MATEK': (3.4, 41.4, 'W', 'B'), 'J_GPS': (3.4, 51.0, 'W', 'B'), 'J_I2C': (3.4, 90.35, 'W', 'B'),
-    'J_IO': (3.4, 102.45, 'W', 'B'), 'J_SPWR': (3.4, 114.5, 'W', 'B'),
+    'J_IO': (3.4, 102.45, 'W', 'B'),
     'J_S1': (40.6, 22.1, 'E', 'B'), 'J_FAN': (40.6, 31.05, 'E', 'B'),
     'J_S2': (40.6, 40.0, 'E', 'B'), 'J_S3': (40.6, 48.4, 'E', 'B'), 'J_S4': (40.6, 56.8, 'E', 'B'),
-    'J_THU': (40.6, 91.1, 'E', 'B'), 'J_RTC': (40.6, 100.5, 'E', 'B'),
-    'J_THA': (7.6, 134.6, 'S', 'B'), 'J_AIPWR': (18.6, 134.6, 'S', 'B'),
+    'J_THU': (40.6, 91.1, 'E', 'B'), 'J_SPWR': (40.6, 100.3, 'E', 'B'), 'J_RTC': (3.4, 114.0, 'W', 'B'),
+    'J_THA': (7.6, 134.6, 'S', 'B'), 'J_AIPWR': (13.0, 3.4, 'N', 'B'),
     # ---- bottom side: under the module
     'U_C33': (19.0, 12.6, 0, 'B'), 'L_C33': (14.0, 12.6, 0, 'B'),
     'U_SD': (20.6, 22.0, 0, 'B'), 'U_SEC': (29.5, 27.0, 0, 'B'), 'U_TEMP': (29.5, 52.0, 0, 'B'),
     'U_MCU': (24.8, 41.0, 0, 'B'), 'U_AON': (14.5, 46.5, 0, 'B'),
     'Q_PMIC': (10.5, 55.5, 0, 'B'), 'Q_PWB': (10.5, 59.5, 0, 'B'),
-    'JP_WDT': (31.6, 34.6, 0, 'B'), 'JP_MATEK': (9.2, 41.4, 90, 'B'), 'JP_SERVO': (9.4, 114.5, 90, 'B'),
+    'JP_WDT': (31.6, 34.6, 0, 'B'), 'JP_MATEK': (9.2, 41.4, 90, 'B'),
     # ---- bottom side: USB / switches
     'U_ESD1': (10.0, 72.5, 0, 'B'), 'U_ID1': (11.0, 77.0, 0, 'B'), 'U_ID2': (11.0, 81.0, 0, 'B'),
     'U_ESD2': (30.5, 72.5, 0, 'B'), 'U_VB2': (30.5, 78.5, 0, 'B'),
-    'U_ESD3': (34.6, 96.6, 0, 'B'), 'U_VB3': (30.2, 96.6, 0, 'B'), 'U_VB4': (18.6, 128.3, 0, 'B'),
+    'U_ESD3': (34.6, 96.6, 0, 'B'), 'U_VB3': (30.2, 96.6, 0, 'B'),
     # ---- bottom side: hold-up boost + charger (next to the supercap pins), battery input protection
     'L_HB': (20.4, 117.6, 180, 'B'), 'U_HB': (13.4, 117.6, 180, 'B'), 'U_CHG': (11.6, 124.6, 0, 'B'), 'D_CHG': (19.0, 124.2, 0, 'B'),
-    'F1': (35.7, 128.3, 90, 'B'), 'Q_RP': (34.4, 110.6, 270, 'B'), 'D_TVS': (24.4, 105.4, 180, 'B'),
+    'F1': (35.7, 128.3, 90, 'B'), 'Q_RP': (34.4, 111.4, 270, 'B'), 'D_TVS': (24.4, 105.4, 180, 'B'),
     'Q_AUX_OFF': (22.6, 86.5, 0, 'F'),
 }
 GLOBAL = ('GND', '+5V_CM5', '+3V3_CM5', '+3V3_AON', '+5V_AUX', 'VIN_PROT')
@@ -62,7 +62,7 @@ GLOBAL = ('GND', '+5V_CM5', '+3V3_CM5', '+3V3_AON', '+5V_AUX', 'VIN_PROT')
 HINT = dict(NEAR)
 HINT.update({'TP_GND': 'U_MCU.7', 'TP_3V3': 'U_MCU.9', 'TP_5V': 'U_AON.1', 'TP_VIN': 'D_B1IN.2', 'TP_5VA': 'L_B2.2',
              'TP_SWIO': 'U_MCU.18', 'TP_RST': 'U_MCU.4', 'D_RPZ': 'Q_RP.1',
-             'TP_SRVV': 'J_SPWR.1', 'TP_SRVG': 'J_SPWR.4', 'TP_AI5V': 'J_AIPWR.1', 'TP_AIGND': 'J_AIPWR.4'})
+             'TP_SRVV': 'J_SPWR.1', 'JP_SERVO': 'J_SPWR.2', 'U_VB4': 'J_AIPWR.1', 'TP_SRVG': 'J_SPWR.4', 'TP_AI5V': 'J_AIPWR.1', 'TP_AIGND': 'J_AIPWR.4'})
 
 
 def load_fp(spec):
@@ -318,7 +318,7 @@ def main(out):
     ncls('PLANE', 0.3, 0.15, via=(0.6, 0.3))
     for n in DIFF100: ns.SetNetclassPatternAssignment(n, 'DIFF100')
     for n in DIFF90: ns.SetNetclassPatternAssignment(n, 'DIFF90')
-    PLANES = ('GND', '+5V_CM5', '+5V_AUX', 'VIN_PROT')
+    PLANES = ('GND', '+5V_CM5', 'VIN_PROT')
     for n in POWER_HI:
         if n not in PLANES: ns.SetNetclassPatternAssignment(n, 'PWR_HI')
     for n in PLANES: ns.SetNetclassPatternAssignment(n, 'PLANE')
@@ -347,6 +347,7 @@ def main(out):
 # In2 power islands (the rest of In2 is GND). High-speed pairs on the bottom layer never cross an island edge.
 PLANE_ISLANDS = {
     '+5V_CM5': [(0.6, 44.0), (16.5, 44.0), (16.5, 131.0), (0.6, 131.0)],
+    '+5V_AUX': [(36.3, 34.0), (43.4, 34.0), (43.4, 108.0), (36.3, 108.0), (36.3, 93.5), (39.5, 93.5), (39.5, 88.0), (36.3, 88.0)],
     'VIN_PROT': [(17.5, 84.5), (33.5, 84.5), (33.5, 103.0), (39.0, 103.0), (39.0, 109.0), (17.5, 109.0)],
 }
 # routing corridors kept free of auto-placed parts: (side, [x0, y0, x1, y1, name])

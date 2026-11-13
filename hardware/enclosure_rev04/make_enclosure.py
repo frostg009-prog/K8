@@ -162,6 +162,29 @@ for yk in (20.0, 32.0, 44.0, 56.0, 68.0):
 
 # ---------------------------------------------------------------- board dummy for the preview
 board = box(0, 0, Z_BB, BW, BL, Z_BT)
+# reference models (NOT for printing): 40x40x10 fan on the lid, CM5 module + Raspberry Pi CM5 Cooler on the board
+FT = 10.0
+fan = rbox(FCX - FAN / 2, Y(FCY) - FAN / 2, Z_TOP, FCX + FAN / 2, Y(FCY) + FAN / 2, Z_TOP + FT, 2.5)
+fan = fan - cyl(FCX, Y(FCY), Z_TOP - 1, Z_TOP + FT + 1, 19.0, 96)
+fan = fan - box(FCX - FAN / 2 + 1.5, Y(FCY) - FAN / 2 + 1.5, Z_TOP + 1.5, FCX + FAN / 2 - 1.5, Y(FCY) + FAN / 2 - 1.5, Z_TOP + FT - 1.5)
+for dx in (-FAN_PITCH / 2, FAN_PITCH / 2):
+    for dy in (-FAN_PITCH / 2, FAN_PITCH / 2):
+        fan = fan - cyl(FCX + dx, Y(FCY) + dy, Z_TOP - 1, Z_TOP + FT + 1, 1.7)
+hub = cyl(FCX, Y(FCY), Z_TOP + 1.0, Z_TOP + FT - 0.5, 9.0, 64)
+blades = None
+import math as _m
+for k in range(7):
+    a_ = 2 * _m.pi * k / 7
+    bl = box(0, -1.4, 0, 9.5, 1.4, FT - 3.0).rotate([18, 0, 0]).rotate([0, 0, _m.degrees(a_)]).translate([FCX + 8.5 * _m.cos(a_), Y(FCY) + 8.5 * _m.sin(a_), Z_TOP + 1.5])
+    blades = bl if blades is None else blades + bl
+spokes = (box(FCX - 0.8, Y(FCY) - 19.5, Z_TOP + FT - 1.2, FCX + 0.8, Y(FCY) + 19.5, Z_TOP + FT) +
+          box(FCX - 19.5, Y(FCY) - 0.8, Z_TOP + FT - 1.2, FCX + 19.5, Y(FCY) + 0.8, Z_TOP + FT))
+fan = fan + hub + (blades ^ cyl(FCX, Y(FCY), Z_TOP, Z_TOP + FT, 18.8, 96)) + spokes
+cm5 = box(M1[0], Y(M1[3]), Z_BT + 3.0, M1[2], Y(M1[1]), Z_BT + 4.2)                         # module on its 2 x 100 pin connectors
+cooler = box(M1[0] + 1.0, Y(M1[3]) + 2.0, Z_BT + 4.2, M1[2] - 1.0, Y(M1[1]) - 2.0, Z_BT + 6.2)
+for i in range(13):
+    xf = M1[0] + 2.0 + i * (M1[2] - M1[0] - 4.0) / 12
+    cooler = cooler + box(xf - 0.6, Y(M1[3]) + 2.0, Z_BT + 6.2, xf + 0.6, Y(M1[1]) - 2.0, Z_BT + 14.5)
 
 
 def save(man, name):
@@ -176,7 +199,10 @@ tl = save(lid, 'lid.stl')
 # lid printed upside down: provide a print-oriented copy
 lid_print = lid.rotate([180, 0, 0]).translate([0, Y0 * 2 + OY, Z_TOP])
 save(lid_print, 'lid_print_orientation.stl')
-save(base + lid + board, 'assembly_preview.stl')
+save(base + lid + board + cm5 + cooler + fan, 'assembly_preview.stl')
+save(fan, 'REFERENCE_fan_4010_do_not_print.stl')
+save(cm5 + cooler, 'REFERENCE_cm5_cooler_do_not_print.stl')
+print('clearance fan bottom -> cooler fins: %.1f mm (roof %.1f mm)' % (Z_TOP - FLOOR - (Z_BT + 14.5), FLOOR))
 rep = []
 rep.append('Outer size  %.1f x %.1f x %.1f mm' % (OX, OY, Z_TOP))
 rep.append('base: watertight=%s volume=%.1f cm3 ; lid: watertight=%s volume=%.1f cm3' % (tb.is_watertight, tb.volume / 1000, tl.is_watertight, tl.volume / 1000))

@@ -7,7 +7,8 @@
  *  1. Hardware watchdog for the CM5: CM5 toggles HEARTBEAT (GPIO22) at least every 2 s
  *     (systemd service cm5-heartbeat). If no edge for WDT_TIMEOUT_S after boot grace:
  *       - ERR LED on, PMIC_EN pulled low 1.5 s (cold reset of CM5), released -> CM5 boots again.
- *     Watchdog can be disabled by closing solder jumper JP_WDT (bench work).
+ *     rev0.4: the watchdog is disabled for bench work with the UART command "W0" ("W1" re-enables it);
+ *     the solder jumper JP_WDT of rev0.3 is gone. Default after power-up: enabled.
  *  2. Power-fail handling: battery voltage (VBAT_SENSE, divider 100k/10k) < VBAT_FAIL_MV
  *     for 20 ms, or the 5 V rail < 4.85 V:
  *       - +5V_AUX switched off (Hailo, USB, fan) to save hold-up energy (AUX_OFF high)
@@ -19,7 +20,7 @@
  *     solid = CM5 not booting (3 resets in a row).
  *  4. UART 115200 8N1 to CM5 UART3 (GPIO8/9): one status line per second
  *     "SUP v=<vbat mV> v5=<mV> sc=<mV> wd=<s> rst=<n> pf=<n> t=<alert>"  and commands:
- *     "W0"/"W1" disable/enable watchdog, "T<n>" timeout seconds, "R" request reset.
+ *     "W0"/"W1" disable/enable watchdog, "T<n>" timeout seconds, "C" clear error, "R" request reset.
  *  Back-feeding protection: all lines to the CM5 are driven only while CM5 3.3 V is present
  *  (CM5_ON_SENSE), otherwise they are inputs (hi-Z) so the powered-down CM5 is not back-fed.
  */
@@ -30,7 +31,7 @@
 #define PIN_LED_ERR   PD4   /* low = LED on */
 #define PIN_UTX       PD5
 #define PIN_URX       PD6
-#define PIN_VBAT      PA1   /* ADC ch1 */
+#define PIN_VBAT      PD3   /* ADC ch4 (rev0.4: moved from PA1, PA1 is NC) */
 #define PIN_V5        PA2   /* ADC ch0 */
 #define PIN_TALERT    PD0   /* temp sensor ALERT, active low */
 #define PIN_HB        PC0   /* heartbeat input from CM5 */
@@ -42,13 +43,13 @@
 #define PIN_SCAP_CHG  PC6   /* supercap charger enable */
 #define PIN_AUX_OFF   PC7   /* high = 5V_AUX buck off */
 #define PIN_CM5_ON    PD2   /* CM5 3.3 V present */
-#define PIN_WDT_DIS   PD3   /* low = watchdog disabled (JP_WDT closed) */
 
 #define VBAT_FAIL_MV   9000   /* below: battery lost/disconnected (works for 3S..6S) */
 #define VBAT_OK_MV     10500
 #define V5_FAIL_MV     4850
 #define BOOT_GRACE_S   120    /* first heartbeat must come within 2 min after power-on */
 static uint16_t wdt_timeout_s = 20;
+static uint8_t wdt_enabled = 1;            /* UART W0 / W1 */
 
 static volatile uint32_t ms;
 void SysTick_Handler(void) __attribute__((interrupt));
@@ -84,7 +85,7 @@ static void cm5_lines(int on) {      /* drive CM5-facing outputs only while CM5 
 int main(void) {
     SystemInit();
     funGpioInitAll();
-    SysTick->CMP = FUNCONF_SYSTEM_CORE_CLOCK / 1000; SysTick->CNT = 0; SysTick->CTLR = 0xf; NVIC_EnableIRQ(SysTicK_IRQn);
+    SysTick->CMP = FUNCONF_SYSTEM_CORE_CLOCK / 1000; SysTick->CNT = 0; SysTick->CTLR = 0xf; NVIC_EnableIRQ(SysTick_IRQn);
     /* independent watchdog for the MCU itself (~4 s) */
     IWDG->CTLR = 0x5555; IWDG->PSCR = 6; IWDG->RLDR = 0xfff; IWDG->CTLR = 0xcccc;
 
@@ -95,8 +96,9 @@ int main(void) {
     funPinMode(PIN_SCAP_CHG, GPIO_CFGLR_OUT_10Mhz_PP); funDigitalWrite(PIN_SCAP_CHG, 1);
     funPinMode(PIN_AUX_OFF, GPIO_CFGLR_OUT_10Mhz_PP); funDigitalWrite(PIN_AUX_OFF, 0);
     funPinMode(PIN_HB, GPIO_CFGLR_IN_PUPD); funPinMode(PIN_CM5_ON, GPIO_CFGLR_IN_FLOAT);
-    funPinMode(PIN_TALERT, GPIO_CFGLR_IN_PUPD); funPinMode(PIN_WDT_DIS, GPIO_CFGLR_IN_PUPD);
-    funDigitalWrite(PIN_WDT_DIS, 1); funDigitalWrite(PIN_HB, 1); funDigitalWrite(PIN_TALERT, 1);
+    funPinMode(PIN_TALERT, GPIO_CFGLR_IN_PUPD);
+    funPinMode(PA1, GPIO_CFGLR_IN_PUPD); funDigitalWrite(PA1, 1);   /* NC pin: pull-up, no floating input */
+    funDigitalWrite(PIN_HB, 1); funDigitalWrite(PIN_TALERT, 1);
     funPinMode(PIN_VBAT, GPIO_CFGLR_IN_ANALOG); funPinMode(PIN_V5, GPIO_CFGLR_IN_ANALOG); funPinMode(PIN_VSCAP, GPIO_CFGLR_IN_ANALOG);
     funPinMode(PIN_URX, GPIO_CFGLR_IN_PUPD);
     adc_init(); uart_init();
@@ -109,7 +111,7 @@ int main(void) {
     for (;;) {
         IWDG->CTLR = 0xaaaa;                                   /* feed MCU watchdog */
         int on = cm5_on(); cm5_lines(on);
-        uint16_t vbat = adc_mv(1, 110, 10), v5 = adc_mv(0, 2, 1), vsc = adc_mv(2, 2, 1);
+        uint16_t vbat = adc_mv(4, 110, 10), v5 = adc_mv(0, 2, 1), vsc = adc_mv(2, 2, 1);
         /* heartbeat edge detection */
         int hb = funDigitalRead(PIN_HB);
         if (hb != last_edge_level) { last_edge_level = hb; last_hb = ms; seen_hb = 1; consecutive = 0; }
@@ -125,7 +127,7 @@ int main(void) {
                 pfails++; err = 2; st = PFAIL; break;
             }
             if (on) funDigitalWrite(PIN_PFAIL, 1);
-            if (funDigitalRead(PIN_WDT_DIS) && on) {
+            if (wdt_enabled && on) {
                 uint32_t lim = seen_hb ? wdt_timeout_s * 1000UL : BOOT_GRACE_S * 1000UL;
                 if (ms - (seen_hb ? last_hb : boot_t) > lim) {  /* CM5 hung -> cold reset */
                     funDigitalWrite(PIN_LED_ERR, 0);
@@ -164,7 +166,7 @@ int main(void) {
         if (on && ms - last_tx > 1000) {
             last_tx = ms;
             snprintf(line, sizeof line, "SUP v=%u v5=%u sc=%u wd=%u rst=%u pf=%u t=%d st=%d\r\n", vbat, v5, vsc,
-                     funDigitalRead(PIN_WDT_DIS) ? wdt_timeout_s : 0, resets, pfails, !funDigitalRead(PIN_TALERT), st);
+                     wdt_enabled ? wdt_timeout_s : 0, resets, pfails, !funDigitalRead(PIN_TALERT), st);
             uart_puts(line);
         }
         while (USART1->STATR & USART_FLAG_RXNE) {
@@ -172,6 +174,7 @@ int main(void) {
             if (c == '\n' || c == '\r') {
                 if (ci >= 2 && cmd[0] == 'T') { int v = 0; for (int k = 1; k < ci; k++) v = v * 10 + cmd[k] - '0'; if (v >= 5 && v <= 600) wdt_timeout_s = v; }
                 if (ci >= 1 && cmd[0] == 'C') err = 0;
+                if (ci >= 2 && cmd[0] == 'W') { wdt_enabled = cmd[1] == '1'; if (wdt_enabled) { last_hb = boot_t = ms; seen_hb = 0; } }
                 if (ci >= 1 && cmd[0] == 'R') { boot_t = ms - BOOT_GRACE_S * 1000UL - 1; seen_hb = 0; }
                 ci = 0;
             } else if (ci < (int)sizeof cmd) cmd[ci++] = c;

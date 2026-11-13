@@ -12,7 +12,7 @@ b = pcbnew.LoadBoard(src)
 GND = b.FindNet('GND')
 import os
 VD, VR = float(os.environ.get('VD', 0.45)), 0.2           # via
-CLR = float(os.environ.get('CLR', 0.15))   # clearance used for checks (>= 0.125 board rule, >= 0.15 power classes)
+CLR = float(os.environ.get('CLR', 0.16))   # clearance used for checks (>= 0.125 board rule, >= 0.15 power classes)
 d = json.load(open(drcj))
 targets = set()
 for v in d['violations']:

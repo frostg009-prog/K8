@@ -309,7 +309,7 @@
       },
       {
         "bus_width": 12,
-        "clearance": 0.2,
+        "clearance": 0.15,
         "diff_pair_gap": 0.25,
         "diff_pair_via_gap": 0.25,
         "diff_pair_width": 0.2,
@@ -528,10 +528,6 @@
       },
       {
         "netclass": "PLANE",
-        "pattern": "+5V_AUX"
-      },
-      {
-        "netclass": "PLANE",
         "pattern": "VIN_PROT"
       },
       {
@@ -549,10 +545,6 @@
       {
         "netclass": "PWR_MID",
         "pattern": "VBUS3"
-      },
-      {
-        "netclass": "PWR_MID",
-        "pattern": "VSERVO"
       },
       {
         "netclass": "PWR_MID",
@@ -577,6 +569,14 @@
       {
         "netclass": "PWR_MID",
         "pattern": "MATEK_5V"
+      },
+      {
+        "netclass": "PWR_HI",
+        "pattern": "VSERVO"
+      },
+      {
+        "netclass": "PLANE",
+        "pattern": "+5V_AUX"
       }
     ]
   },

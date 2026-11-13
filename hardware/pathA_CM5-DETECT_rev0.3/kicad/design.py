@@ -271,10 +271,10 @@ R('10k', 'SD_PWR_ON', '+3V3_CM5'); Cap('10uF', 'SD_VDD', fp=C0805); Cap('100nF',
 
 # ===================================================================== supervisor MCU (watchdog + power-fail + LEDs)
 add('U_MCU', 'Package_SO:TSSOP-20_4.4x6.5mm_P0.65mm', 'CH32V003F4P6 supervisor (HW watchdog, power-fail)', 'C5187096',
-    {1: 'LED_ERR_N', 2: 'MCU_TX_R', 3: 'MCU_RX_R', 4: 'MCU_NRST', 5: 'VBAT_SENSE', 6: 'V5_SENSE', 7: 'GND',
+    {1: 'LED_ERR_N', 2: 'MCU_TX_R', 3: 'MCU_RX_R', 4: 'MCU_NRST', 5: '', 6: 'V5_SENSE', 7: 'GND',
      8: 'TEMP_ALERT', 9: '+3V3_AON', 10: 'HEARTBEAT_R', 11: 'PFAIL_R', 12: 'PMIC_OFF', 13: 'PWRBTN_PRESS',
      14: 'VSCAP_SENSE', 15: 'HOLD_EN_R', 16: 'SCAP_CHG_EN', 17: 'AUX_OFF', 18: 'MCU_SWIO', 19: 'CM5_ON_SENSE',
-     20: 'WDT_DIS'})
+     20: 'VBAT_SENSE'})   # rev0.4: VBAT_SENSE on PD3/A4 (was PA1), PA1 = NC, WDT_DIS jumper removed (UART command W0)
 Cap('100nF', '+3V3_AON', near='U_MCU.9'); Cap('1uF', '+3V3_AON', fp=C0603, near='U_MCU.9')
 R('1k', 'MCU_TX_R', 'MCU_TX', note='series: no back-feed when CM5 is off')
 R('1k', 'MCU_RX_R', 'MCU_RX'); R('1k', 'HEARTBEAT_R', 'HEARTBEAT'); R('1k', 'PFAIL_R', 'PFAIL_N')
@@ -286,8 +286,7 @@ add('Q_PMIC', SOT23, '2N7002 -> CM5 PMIC_EN (hard reset)', 'C8545', {1: 'PMIC_OF
 R('100k', 'PMIC_OFF', 'GND')
 add('Q_PWB', SOT23, '2N7002 -> CM5 PWR_BUT (wake / clean off)', 'C8545', {1: 'PWRBTN_PRESS', 2: 'GND', 3: 'PWR_BUT'})
 R('100k', 'PWRBTN_PRESS', 'GND')
-add('JP_WDT', 'Jumper:SolderJumper-2_P1.3mm_Open_RoundedPad1.0x1.5mm', 'close = watchdog disabled (bench)', '',
-    {1: 'WDT_DIS', 2: 'GND'})
+# rev0.4: JP_WDT removed - the watchdog is disabled for bench work with the UART command 'W0' (see supervisor.c)
 for tp, net in (('TP_SWIO', 'MCU_SWIO'), ('TP_3V3', '+3V3_AON'), ('TP_GND', 'GND'), ('TP_RST', 'MCU_NRST'),
                 ('TP_5V', '+5V_CM5'), ('TP_VIN', 'VIN_PROT'), ('TP_5VA', '+5V_AUX')):
     add(tp, 'TestPoint:TestPoint_Pad_D1.0mm', tp[3:], '', {1: net})

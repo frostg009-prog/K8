@@ -16,7 +16,7 @@ for t in list(b.GetTracks()):
         if any(near(t.GetPosition(), x, y) for x, y in pts['via_dangling']):
             b.Remove(t); n += 1
     else:
-        if any(near(t.GetStart(), x, y) or near(t.GetEnd(), x, y) for x, y in pts['track_dangling'] + pts['via_dangling']) and TM(t.GetLength()) < 3.0:
+        if any(near(t.GetStart(), x, y) or near(t.GetEnd(), x, y) for x, y in pts['track_dangling']) and TM(t.GetLength()) < 5.0:
             b.Remove(t); n += 1
 pcbnew.ZONE_FILLER(b).Fill(b.Zones())
 b.Save(out)

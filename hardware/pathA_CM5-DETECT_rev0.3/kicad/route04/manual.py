@@ -5,7 +5,6 @@ import sys, pcbnew
 src, out = sys.argv[1:3]
 FM, TM = pcbnew.FromMM, pcbnew.ToMM
 b = pcbnew.LoadBoard(src)
-FPS = list(b.GetFootprints())
 REMOVE = [
     ('HB_ILIM', 18.13, 117.82, 17.55, 117.82), ('HB_ILIM', 17.39, 117.08, 17.11, 116.81), ('HB_ILIM', 17.39, 117.66, 17.39, 117.08),
     ('HB_ILIM', 17.55, 117.82, 17.39, 117.66), ('HB_ILIM', 17.11, 116.81, 16.05, 116.81),
@@ -16,33 +15,6 @@ ADD = [
     ('LED_RUN_N', 'B', [(10.14, 42.98), (9.66, 42.98), (9.66, 42.50)], 0.15),   # square corner: clear of JP_MATEK pad
 ]
 VIAS = []
-MOVE = {'C9': (30.0, 46.6)}      # ADC filter cap: next to the divider R2/R3, same side of the USB1 pair as U_MCU
-import math
-for ref, (tx, ty) in MOVE.items():
-    fp = [f for f in FPS if f.GetReference() == ref][0]
-    for t in list(b.GetTracks()):          # rip the stubs that end on the old pads
-        for pd in fp.Pads():
-            if t.GetNetCode() == pd.GetNetCode() and (pd.HitTest(t.GetStart()) or (t.GetClass() == 'PCB_TRACK' and pd.HitTest(t.GetEnd()))) and TM(t.GetLength()) < 2.0:
-                b.Remove(t); break
-    others = [p for f in FPS if f.GetReference() != ref for p in f.Pads()] + list(b.GetTracks())
-    lay = pcbnew.B_Cu if fp.IsFlipped() else pcbnew.F_Cu
-    best = None
-    for r in [k * 0.2 for k in range(0, 40)]:
-        for k in range(1 if r == 0 else 24):
-            a = 2 * math.pi * k / 24
-            for rot in (0, 90):
-                fp.SetOrientationDegrees(rot); fp.SetPosition(pcbnew.VECTOR2I(FM(tx + r * math.cos(a)), FM(ty + r * math.sin(a))))
-                ok = True
-                for pd in fp.Pads():
-                    sh = pd.GetEffectiveShape(lay)
-                    for o in others:
-                        if o.IsOnLayer(lay) and o.GetEffectiveShape(lay).Collide(sh, FM(0.3)):
-                            ok = False; break
-                    if not ok: break
-                if ok: best = (r, rot); break
-            if best: break
-        if best: break
-    print('moved', ref, 'to', TM(fp.GetPosition().x), TM(fp.GetPosition().y), fp.GetOrientationDegrees(), 'ok' if best else 'NO SPOT')
 n = 0
 for t in list(b.GetTracks()):
     if t.GetClass() != 'PCB_TRACK':

@@ -33,6 +33,8 @@ LAY = [pcbnew.F_Cu, pcbnew.In2_Cu, pcbnew.B_Cu]
 BASE = os.environ.get('REZONIT_CLASS') == 'base'
 VIA_R = 0.3 if BASE else 0.225
 VIA_SZ = (0.6, 0.3) if BASE else (0.45, 0.2)
+if os.environ.get('SMALLVIA') == '1':      # island stitching: 0.4/0.2 via (Rezonit advanced class)
+    VIA_R, VIA_SZ = 0.2, (0.4, 0.2)
 EXPC = 0.03          # clearance raster expansion
 
 
@@ -106,6 +108,9 @@ for u in d['unconnected_items']:
     if not m or m.group(1) == 'GND': continue
     pairs[m.group(1)].append([(i['pos']['x'], i['pos']['y']) for i in u['items']])
 SKIP = {'B1_SW', 'B2_SW'}
+if os.environ.get('PAIRS'):                    # extra explicit connections (e.g. isolated GND pads -> nearest GND via)
+    for net_, p0, p1 in json.load(open(os.environ['PAIRS'])):
+        pairs[net_].append([tuple(p0), tuple(p1)])
 print('nets', len(pairs), 'pairs', sum(len(v) for v in pairs.values()), flush=True)
 STRUCT = np.ones((3, 3), bool)
 new_tracks, new_vias = [], []
@@ -152,7 +157,9 @@ def astar_route(net, sm, gm):
     base_w = TM(cls.GetTrackWidth())
     js = np.concatenate([np.nonzero(sm.any(0))[0], np.nonzero(gm.any(0))[0]]); is_ = np.concatenate([np.nonzero(sm.any(0))[1], np.nonzero(gm.any(0))[1]])
     tries = ((base_w, 0.2), (min(base_w, 0.5), 0.2), (min(base_w, 0.25), 0.2), (0.15, 0.15), (0.12, 0.13)) if base_w > 0.25 else ((min(base_w, 0.25), 0.2), (0.15, 0.15), (0.12, 0.13))
+    ccl = TM(cls.GetClearance())
     for w, clr in tries:
+        clr = max(clr, ccl)
         for margin in (3.0, 10.0, 80.0):
             k = int(margin / G)
             i0, i1 = max(is_.min() - k, 0), min(is_.max() + k + 1, NX); j0, j1 = max(js.min() - k, 0), min(js.max() + k + 1, NY)
@@ -259,7 +266,7 @@ for lay_idx, lay in ((0, pcbnew.F_Cu), (2, pcbnew.B_Cu)):
             jj, ii = int(vy / G) - mj.start, int(vx / G) - mi.start
             if 0 <= jj < m.shape[0] and 0 <= ii < m.shape[1] and m[jj, ii]: gv[jj, ii] = True
         if gv.any(): continue
-        okm = m & (sub >= 0.15 + VIA_R + 0.06)
+        okm = m & (sub >= float(os.environ.get('ISL_CLR', 0.15)) + VIA_R + 0.06)
         if not okm.any(): lost += 1; continue
         jj, ii = np.unravel_index(np.argmax(np.where(okm, sub, -1)), okm.shape)
         cx, cy = (ii + mi.start + .5) * G, (jj + mj.start + .5) * G

@@ -1,0 +1,198 @@
+{
+    "$schema": "https://schemas.kicad.org/drc.v1.json",
+    "coordinate_units": "mm",
+    "date": "2026-11-13T10:31:16+0000",
+    "included_severities": [
+        "error",
+        "warning",
+        "exclusion"
+    ],
+    "kicad_version": "9.0.9",
+    "schematic_parity": [],
+    "source": "CM5-DETECT_rev04.kicad_pcb",
+    "unconnected_items": [],
+    "violations": [
+        {
+            "description": "Track has unconnected end",
+            "items": [
+                {
+                    "description": "Track [I2C1_SDA] on B.Cu, length 5.8121 mm",
+                    "pos": {
+                        "x": 37.3255,
+                        "y": 25.7445
+                    },
+                    "uuid": "753d4a96-52db-4d10-9cee-110610ef9ba2"
+                }
+            ],
+            "severity": "warning",
+            "type": "track_dangling"
+        },
+        {
+            "description": "Silkscreen clipped by board edge",
+            "items": [
+                {
+                    "description": "Segment on Edge.Cuts",
+                    "pos": {
+                        "x": 50.0,
+                        "y": 0.0
+                    },
+                    "uuid": "1d2db7e6-a66b-4427-a4f4-21a6651b86cc"
+                },
+                {
+                    "description": "Segment of J_USB2 on F.Silkscreen",
+                    "pos": {
+                        "x": 50.93,
+                        "y": 70.93
+                    },
+                    "uuid": "76323afd-fdeb-4aae-90c6-3828777ca729"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_edge_clearance"
+        },
+        {
+            "description": "Silkscreen clipped by board edge",
+            "items": [
+                {
+                    "description": "Segment on Edge.Cuts",
+                    "pos": {
+                        "x": 50.0,
+                        "y": 0.0
+                    },
+                    "uuid": "1d2db7e6-a66b-4427-a4f4-21a6651b86cc"
+                },
+                {
+                    "description": "Segment of J_USB2 on F.Silkscreen",
+                    "pos": {
+                        "x": 51.07,
+                        "y": 80.0
+                    },
+                    "uuid": "2d1d561a-e19a-4847-bc0e-ea7c267ed6bd"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_edge_clearance"
+        },
+        {
+            "description": "Silkscreen clipped by board edge",
+            "items": [
+                {
+                    "description": "Segment on Edge.Cuts",
+                    "pos": {
+                        "x": 0.0,
+                        "y": 138.0
+                    },
+                    "uuid": "a4863c80-8137-4ccb-abe0-a32e6046f1f2"
+                },
+                {
+                    "description": "Segment of J_USB1 on F.Silkscreen",
+                    "pos": {
+                        "x": -1.07,
+                        "y": 71.0
+                    },
+                    "uuid": "1f767f5c-c92f-4192-88fa-fe7a8401b70a"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_edge_clearance"
+        },
+        {
+            "description": "Silkscreen clipped by board edge",
+            "items": [
+                {
+                    "description": "Segment on Edge.Cuts",
+                    "pos": {
+                        "x": 0.0,
+                        "y": 138.0
+                    },
+                    "uuid": "a4863c80-8137-4ccb-abe0-a32e6046f1f2"
+                },
+                {
+                    "description": "Segment of J_USB1 on F.Silkscreen",
+                    "pos": {
+                        "x": -0.93,
+                        "y": 80.07
+                    },
+                    "uuid": "e7d0b6dc-9d51-4548-bd20-5324034f58d3"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_edge_clearance"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "Circle of J_USB2 on F.Silkscreen",
+                    "pos": {
+                        "x": 43.45,
+                        "y": 79.95
+                    },
+                    "uuid": "49a55ba7-79aa-404c-a742-87069585f198"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "Footprint text of SC1 (+)",
+                    "pos": {
+                        "x": 32.6,
+                        "y": 117.3
+                    },
+                    "uuid": "3b1b4da5-a312-4f3a-b3d6-7287674818dc"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "Circle of J_USB1 on F.Silkscreen",
+                    "pos": {
+                        "x": 6.55,
+                        "y": 71.05
+                    },
+                    "uuid": "87ae6c85-55f9-4b6d-b5f5-90ea51e5d517"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "Footprint text of SC2 (+)",
+                    "pos": {
+                        "x": 32.6,
+                        "y": 133.6
+                    },
+                    "uuid": "77998b83-9a34-4ab3-b564-6f162a1ddd51"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "Segment of J_SD on B.Silkscreen",
+                    "pos": {
+                        "x": 5.98,
+                        "y": 16.03
+                    },
+                    "uuid": "d094b897-d56e-47af-9e16-dbfa3af54b10"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        }
+    ]
+}

@@ -1,0 +1,45 @@
+** Drc report for CM5-DETECT_rev04.kicad_pcb **
+** Created on 2026-11-13T10:31:21+0000 **
+** Report includes: Errors, Warnings, Exclusions **
+
+** Found 10 DRC violations **
+[track_dangling]: Track has unconnected end
+    Local override; warning
+    @(37.3255 mm, 25.7445 mm): Track [I2C1_SDA] on B.Cu, length 5.8121 mm
+[silk_edge_clearance]: Silkscreen clipped by board edge
+    Rule: board setup constraints silk; warning
+    @(50.0000 mm, 0.0000 mm): Segment on Edge.Cuts
+    @(50.9300 mm, 70.9300 mm): Segment of J_USB2 on F.Silkscreen
+[silk_edge_clearance]: Silkscreen clipped by board edge
+    Rule: board setup constraints silk; warning
+    @(50.0000 mm, 0.0000 mm): Segment on Edge.Cuts
+    @(51.0700 mm, 80.0000 mm): Segment of J_USB2 on F.Silkscreen
+[silk_edge_clearance]: Silkscreen clipped by board edge
+    Rule: board setup constraints silk; warning
+    @(0.0000 mm, 138.0000 mm): Segment on Edge.Cuts
+    @(-1.0700 mm, 71.0000 mm): Segment of J_USB1 on F.Silkscreen
+[silk_edge_clearance]: Silkscreen clipped by board edge
+    Rule: board setup constraints silk; warning
+    @(0.0000 mm, 138.0000 mm): Segment on Edge.Cuts
+    @(-0.9300 mm, 80.0700 mm): Segment of J_USB1 on F.Silkscreen
+[silk_over_copper]: Silkscreen clipped by solder mask
+    Local override; warning
+    @(43.4500 mm, 79.9500 mm): Circle of J_USB2 on F.Silkscreen
+[silk_over_copper]: Silkscreen clipped by solder mask
+    Local override; warning
+    @(32.6000 mm, 117.3000 mm): Footprint text of SC1 (+)
+[silk_over_copper]: Silkscreen clipped by solder mask
+    Local override; warning
+    @(6.5500 mm, 71.0500 mm): Circle of J_USB1 on F.Silkscreen
+[silk_over_copper]: Silkscreen clipped by solder mask
+    Local override; warning
+    @(32.6000 mm, 133.6000 mm): Footprint text of SC2 (+)
+[silk_over_copper]: Silkscreen clipped by solder mask
+    Local override; warning
+    @(5.9800 mm, 16.0300 mm): Segment of J_SD on B.Silkscreen
+
+** Found 0 unconnected pads **
+
+** Found 0 Footprint errors **
+
+** End of Report **

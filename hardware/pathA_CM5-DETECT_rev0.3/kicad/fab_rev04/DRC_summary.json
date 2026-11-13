@@ -1,0 +1,9 @@
+{
+ "errors": 0,
+ "unconnected": 0,
+ "detail": {
+  "warning:track_dangling": 1,
+  "warning:silk_edge_clearance": 4,
+  "warning:silk_over_copper": 5
+ }
+}

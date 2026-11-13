@@ -1,0 +1,105 @@
+Group,Qty,Item,For,Source
+PCB assembly (factory),11,22uF [C_0805_2012Metric],"C1,C2,C3,C4,C30,C31,C32,C33,C40,C42,C44",LCSC C45783
+PCB assembly (factory),15,100nF [C_0402_1005Metric],"C5,C6,C9,C13,C16,C23,C26,C35,C46,C47,C49,C50,C52,C53,C54",LCSC C1525
+PCB assembly (factory),6,10uF [C_0805_2012Metric],"C7,C39,C41,C43,C45,C48",LCSC C15850
+PCB assembly (factory),7,2.2uF 100V [C_1206_3216Metric],"C8,C10,C11,C12,C20,C21,C22",LCSC C170101
+PCB assembly (factory),2,8.2nF [C_0402_1005Metric],"C14,C24",LCSC C45186
+PCB assembly (factory),2,100pF [C_0402_1005Metric],"C15,C25",LCSC C1546
+PCB assembly (factory),7,47uF 16V [C_1210_3225Metric],"C17,C18,C19,C27,C28,C29,C55",LCSC C77101
+PCB assembly (factory),1,2.2uF [C_0402_1005Metric],C34,LCSC C12530
+PCB assembly (factory),1,4.7nF [C_0402_1005Metric],C36,LCSC C1538
+PCB assembly (factory),3,1uF [C_0603_1608Metric],"C37,C38,C51",LCSC C15849
+PCB assembly (factory),1,100uF 50V low-ESR [CP_Elec_8x10],C_BULK,LCSC C48935390
+PCB assembly (factory),1,SS510C (blocks hold-up back-feed) [D_SMC],D_B1IN,LCSC C19229
+PCB assembly (factory),2,SS510C 5A 100V Schottky [D_SMC],"D_B1,D_B2",LCSC C19229
+PCB assembly (factory),1,SS34 (cap max 4.8 V = 2.4 V/cell) [D_SMA],D_CHG,LCSC C8678
+PCB assembly (factory),1,LED red ERROR [LED_0603_1608Metric],D_ERR,LCSC C2286
+PCB assembly (factory),1,LED green PWR [LED_0603_1608Metric],D_PWR,LCSC C12624
+PCB assembly (factory),1,BZT52C12 Vgs clamp [D_SOD-123],D_RPZ,LCSC C43491
+PCB assembly (factory),1,LED blue RUN [LED_0603_1608Metric],D_RUN,LCSC C2288
+PCB assembly (factory),1,SMCJ33A TVS 1.5kW [D_SMC],D_TVS,LCSC C152083
+PCB assembly (factory),1,10A fast 2410 125V [Fuse_2410],F1,LCSC C2838934
+PCB assembly (factory),1,"AI POWER 5V (5V,5V,GND,GND) JST-GH for Hailo HAT [JST_GH_SM04B-GHS-TB_1x04-1MP_P1.25mm_Horizontal]",J_AIPWR,LCSC C189895
+PCB assembly (factory),1,XT60PW-M (battery 3S-6S) [AMASS_XT60PW-M_1x02_P7.20mm_Horizontal],J_BAT,LCSC C98732
+PCB assembly (factory),1,CAM1 MIPI CSI-2 4-lane FFC 22p 0.5mm (Pi 5 / CM5IO pinout) [Hirose_FH12-22S-0.5SH_1x22-1MP_P0.50mm_Horizontal],J_CAM1,LCSC C597981
+PCB assembly (factory),1,CAM2 MIPI CSI-2 4-lane FFC 22p 0.5mm (Pi 5 / CM5IO pinout) [Hirose_FH12-22S-0.5SH_1x22-1MP_P0.50mm_Horizontal],J_CAM2,LCSC C597981
+PCB assembly (factory),1,"FAN 5V PWM (5V,PWM,GND,TACH) [JST_SH_SM04B-SRSS-TB_1x04-1MP_P1.00mm_Horizontal]",J_FAN,LCSC C160404
+PCB assembly (factory),1,"GPS/TELEM UART2 (5V,TX,RX,GND) [JST_SH_SM04B-SRSS-TB_1x04-1MP_P1.00mm_Horizontal]",J_GPS,LCSC C160404
+PCB assembly (factory),1,"I2C1 (3V3,SCL,SDA,GND) [JST_SH_SM04B-SRSS-TB_1x04-1MP_P1.00mm_Horizontal]",J_I2C,LCSC C160404
+PCB assembly (factory),1,"GPIO (3V3,G7,G10,G11,G16,G17,G24,GND) [JST_SH_SM08B-SRSS-TB_1x08-1MP_P1.00mm_Horizontal]",J_IO,LCSC C160408
+PCB assembly (factory),1,"MATEK UART0 (5V*,TX,RX,GND) [JST_SH_SM04B-SRSS-TB_1x04-1MP_P1.00mm_Horizontal]",J_MATEK,LCSC C160404
+PCB assembly (factory),1,PCIe x1 FFC 16p (Pi 5 pinout) -> Hailo AI HAT+/M.2 HAT+ [Hirose_FH12-16S-0.5SH_1x16-1MP_P0.50mm_Horizontal],J_PCIE,LCSC C596731
+PCB assembly (factory),1,"RTC battery 3V (+,-) [JST_SH_SM02B-SRSS-TB_1x02-1MP_P1.00mm_Horizontal]",J_RTC,LCSC C160402
+PCB assembly (factory),1,"SERVO1 (SIG,V+,GND) [JST_SH_SM03B-SRSS-TB_1x03-1MP_P1.00mm_Horizontal]",J_S1,LCSC C160403
+PCB assembly (factory),1,"SERVO2 (SIG,V+,GND) [JST_SH_SM03B-SRSS-TB_1x03-1MP_P1.00mm_Horizontal]",J_S2,LCSC C160403
+PCB assembly (factory),1,"SERVO3 (SIG,V+,GND) [JST_SH_SM03B-SRSS-TB_1x03-1MP_P1.00mm_Horizontal]",J_S3,LCSC C160403
+PCB assembly (factory),1,"SERVO4 (SIG,V+,GND) [JST_SH_SM03B-SRSS-TB_1x03-1MP_P1.00mm_Horizontal]",J_S4,LCSC C160403
+PCB assembly (factory),1,microSD push-push TF-01A [TF-SMD_TF-01A],J_SD,LCSC C91145
+PCB assembly (factory),1,"SERVO POWER IN from BEC (V+,V+,GND,GND) JST-GH [JST_GH_SM04B-GHS-TB_1x04-1MP_P1.25mm_Horizontal]",J_SPWR,LCSC C189895
+PCB assembly (factory),1,"THERMAL AUX (5V,3V3,SCL,SDA,SYNC,GND) [JST_SH_SM06B-SRSS-TB_1x06-1MP_P1.00mm_Horizontal]",J_THA,LCSC C160406
+PCB assembly (factory),1,"THERMAL USB (VBUS,D-,D+,GND) [JST_SH_SM04B-SRSS-TB_1x04-1MP_P1.00mm_Horizontal]",J_THU,LCSC C160404
+PCB assembly (factory),1,USB-C #1 FW/PC (rpiboot + USB gadget) [USB-C-SMD_TYPE-C-16PIN-2MD-073],J_USB1,LCSC C2765186
+PCB assembly (factory),1,USB-C #2 HOST [USB-C-SMD_TYPE-C-16PIN-2MD-073],J_USB2,LCSC C2765186
+PCB assembly (factory),2,6.8uH 6A FXL0630-6R8-M [IND-SMD_L7.0-W6.6],"L_B1,L_B2",LCSC C167221
+PCB assembly (factory),1,2.2uH 2.3A FNR4012S2R2MT [L_Changjiang_FNR4012S],L_C33,LCSC C167776
+PCB assembly (factory),1,2.2uH 9.5A SLO0650H2R2MTT [IND-SMD_L7.1-W6.6_SLO0650H],L_HB,LCSC C216163
+PCB assembly (factory),1,Raspberry Pi CM5 (CM5108032 / CM5116032 / Lite) [Raspberry-Pi-5-Compute-Module],M1,LCSC Amphenol 10164227-1001A1RLF x2 (C6782225)
+PCB assembly (factory),1,2N7002 [SOT-23],Q_AUX_OFF,LCSC C8545
+PCB assembly (factory),1,2N7002 -> CM5 PMIC_EN (hard reset) [SOT-23],Q_PMIC,LCSC C8545
+PCB assembly (factory),1,2N7002 -> CM5 PWR_BUT (wake / clean off) [SOT-23],Q_PWB,LCSC C8545
+PCB assembly (factory),1,NCE60P12K P-MOS 60V reverse-polarity [TO-252-2_L6.5-W6.1-P4.58-LS10.0-TL],Q_RP,LCSC C326372
+PCB assembly (factory),1,47k [R_0402_1005Metric],R1,LCSC C25792
+PCB assembly (factory),8,100k [R_0402_1005Metric],"R2,R4,R10,R16,R18,R25,R49,R50",LCSC C25741
+PCB assembly (factory),13,10k [R_0402_1005Metric],"R3,R9,R15,R27,R36,R42,R43,R44,R45,R46,R47,R48,R56",LCSC C25744
+PCB assembly (factory),2,18k [R_0402_1005Metric],"R5,R11",LCSC C25762
+PCB assembly (factory),2,249k [R_0402_1005Metric],"R6,R12",LCSC C2998084
+PCB assembly (factory),2,10.5k [R_0402_1005Metric],"R7,R13",LCSC C25850
+PCB assembly (factory),2,53.6k [R_0402_1005Metric],"R8,R14",LCSC C5153961
+PCB assembly (factory),3,6.8k [R_0402_1005Metric],"R17,R30,R31",LCSC C93940
+PCB assembly (factory),2,10k [R_0603_1608Metric],"R19,R20",LCSC C25804
+PCB assembly (factory),1,340k [R_0402_1005Metric],R21,LCSC C2933090
+PCB assembly (factory),1,107k [R_0402_1005Metric],R22,LCSC C25743
+PCB assembly (factory),1,30k [R_0402_1005Metric],R23,LCSC C25776
+PCB assembly (factory),1,127k [R_0402_1005Metric],R24,LCSC C25751
+PCB assembly (factory),1,45.3k [R_0402_1005Metric],R26,LCSC C2933099
+PCB assembly (factory),2,56k [R_0402_1005Metric],"R28,R29",LCSC C25796
+PCB assembly (factory),1,3.4k [R_0402_1005Metric],R32,LCSC C4940
+PCB assembly (factory),3,2.2k [R_0402_1005Metric],"R33,R34,R35",LCSC C25879
+PCB assembly (factory),7,1k [R_0402_1005Metric],"R37,R38,R39,R40,R41,R53,R55",LCSC C11702
+PCB assembly (factory),5,220R [R_0402_1005Metric],"R54,R57,R58,R59,R60",LCSC C25091
+PCB assembly (factory),1,0R [R_0402_1005Metric],R_VREF,LCSC C17168
+PCB assembly (factory),1,10F 2.7V supercap (Jianghai SCCDQR2R7106 / Kamcap) [SuperCap_D10_L20_Horizontal],SC1,LCSC SCCDQR2R7106
+PCB assembly (factory),1,10F 2.7V supercap [SuperCap_D10_L20_Horizontal],SC2,LCSC SCCDQR2R7106
+PCB assembly (factory),1,BOOT (nRPIBOOT) [SW-SMD_4P-L5.2-W5.2-P3.70-LS6.4],SW_BOOT,LCSC C42420254
+PCB assembly (factory),1,POWER (PWR_BUT) [SW-SMD_4P-L5.2-W5.2-P3.70-LS6.4],SW_PWR,LCSC C42420254
+PCB assembly (factory),1,ME6211C33M5G LDO 3.3V [SOT-23-5],U_AON,LCSC C82942
+PCB assembly (factory),2,RT6365GSP 60V 5A buck (alt SCT2650STER) [SOP-8_L5.0-W3.9-P1.27-LS6.0-BL-EP],"U_B1,U_B2",LCSC C3024482
+PCB assembly (factory),1,SY8089A1AAC 2A buck 3.3V cameras [SOT-23-5],U_C33,LCSC C479074
+PCB assembly (factory),1,SY6280AAC supercap charger 1A [SOT-23-5],U_CHG,LCSC C55136
+PCB assembly (factory),3,USBLC6-2SC6 ESD [SOT-23-6],"U_ESD1,U_ESD2,U_ESD3",LCSC C2827654
+PCB assembly (factory),1,SGM6611C boost 7A (hold-up 5.03 V) [VQFN-11_L2.5-W2.0-P0.50-TL_TI_RNR],U_HB,LCSC C699669
+PCB assembly (factory),2,CH213K ideal diode VBUS1->5V [SOT-23],"U_ID1,U_ID2",LCSC C5456874
+PCB assembly (factory),1,"CH32V003F4P6 supervisor (HW watchdog, power-fail) [TSSOP-20_4.4x6.5mm_P0.65mm]",U_MCU,LCSC C5187096
+PCB assembly (factory),1,RT9742GGJ5 SD power switch [TSOT-23-5],U_SD,LCSC C250547
+PCB assembly (factory),1,ATECC608B secure element (I2C 0x60) [SOIC-8_3.9x4.9mm_P1.27mm],U_SEC,LCSC C1518769
+PCB assembly (factory),1,NST175H temp sensor 0x48 [SOIC-8_3.9x4.9mm_P1.27mm],U_TEMP,LCSC C917444
+PCB assembly (factory),2,SY6280AAC VBUS switch 1A [SOT-23-5],"U_VB2,U_VB3",LCSC C55136
+PCB assembly (factory),1,SY6280AAC 5V for AI board 2A [SOT-23-5],U_VB4,LCSC C55136
+Module,1,"Raspberry Pi Compute Module 5 (CM5108032: 8 GB RAM, 32 GB eMMC, no Wi-Fi) - or CM5 Lite + microSD",M1,Raspberry Pi distributor
+Module,1,Raspberry Pi CM5 Cooler (SC1748) - heatsink for CM5,M1,Raspberry Pi distributor
+Module,4,"Screw M2.5 x 6 mm (CM5 to base stand-offs, through the module)",M1 holes,any
+Board,2,"Supercapacitor 10 F 2.7 V D10 x L20, radial (SCCDQR2R7106 or Kamcap SP-2R7-106) - lay flat, glue","SC1,SC2",LCSC / ChipDip
+Board,1,XT60PW-M (AMASS) right-angle PCB male,J_BAT,LCSC C98732
+Cable,2,"Camera FFC 22-pin 0.5 mm, same-side contacts (Pi 5 / CM camera cable), 200-400 mm","J_CAM1,J_CAM2",Raspberry Pi / AliExpress
+Cable,1,"PCIe FFC 16-pin 0.5 mm (Pi 5 PCIe cable, supplied with AI HAT+) <= 50 mm",J_PCIE,with Hailo AI HAT+
+Cable,11,"JST-SH 1.0 mm pre-crimped cable sets (SHR-xxV-S housing): 2p x1, 3p x4, 4p x6, 6p x1, 8p x1",J_*,AliExpress / LCSC
+Cable,1,"XT60 battery lead (female), 12-14 AWG",J_BAT,any
+Cable,1,USB-C cable (PC <-> board) for rpiboot flashing / USB gadget,J_USB1,any
+Accessory,1,RTC coin cell CR2032 with 2-pin JST-SH lead (or ML2032 rechargeable),J_RTC,any
+Accessory,1,"Fan 5 V 25 x 25 mm or 30 x 30 mm with 4-pin PWM (optional, JST-SH 4p)",J_FAN,optional
+Accessory,1,microSD card A2 32-128 GB (only for CM5 Lite),J_SD,optional
+Accessory,1,Hailo-8L / Hailo-8 AI HAT+ (26/13 TOPS) or M.2 HAT+ with Hailo module,"J_PCIE,J_AIPWR",optional
+Enclosure,1,"base.stl  - PETG / ASA, 0.2 mm layer, 3 walls, 25 % infill, no supports",enclosure_rev04,print
+Enclosure,1,"lid_print_orientation.stl - PETG / ASA, roof down, supports only under the side vents",enclosure_rev04,print
+Enclosure,6,"Screw M2.5 x 16 mm cap head (DIN 912 / ISO 7380), from below: base -> board -> lid boss",H1..H6,any
+Tools,1,WCH-LinkE programmer (flashes the CH32V003 supervisor via TP_SWIO/TP_3V3/TP_GND),U_MCU,LCSC / AliExpress

@@ -25,5 +25,10 @@ dtparam=pciex1
 dtparam=pciex1_gen=2
 # BCM2712 internal watchdog as second level
 dtparam=watchdog=on
-# fan: CM5 FAN_PWM/TACH pins (JST-GH J_FAN)
-dtparam=fan_temp0=55000,fan_temp1=65000,fan_temp2=75000
+# fan (mandatory, 40 mm 5 V on the lid) on J_FAN: pin1 +5V, pin2 PWM (CM5 Fan_PWM), pin3 GND, pin4 TACH
+# PWM fan: speed follows the SoC temperature; 2-wire fan: runs at full speed whenever +5V_AUX is on
+dtparam=cooling_fan=on
+dtparam=fan_temp0=50000,fan_temp0_hyst=5000,fan_temp0_speed=90
+dtparam=fan_temp1=60000,fan_temp1_hyst=5000,fan_temp1_speed=150
+dtparam=fan_temp2=67500,fan_temp2_hyst=5000,fan_temp2_speed=200
+dtparam=fan_temp3=75000,fan_temp3_hyst=5000,fan_temp3_speed=255

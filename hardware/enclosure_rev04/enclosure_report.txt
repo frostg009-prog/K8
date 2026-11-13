@@ -1,6 +1,7 @@
 Outer size  55.7 x 143.7 x 28.5 mm
-base: watertight=True volume=22.9 cm3 ; lid: watertight=True volume=26.6 cm3
+base: watertight=True volume=22.9 cm3 ; lid: watertight=True volume=25.9 cm3
 board bottom z=8.0, board top z=9.5, split z=13.5
+fan 40x40 on lid: centre KiCad (28.0, 40.0), opening dia 37, M3 holes 32 mm pitch
 J_USB2   E-wall  F side  z 7.7..14.7
 J_BAT    S-wall  F side  z 9.3..18.3
 J_CAM2   N-wall  F side  z 9.3..12.1

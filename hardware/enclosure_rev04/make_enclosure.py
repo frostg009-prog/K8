@@ -143,11 +143,20 @@ for p in D['parts']:
         lid = lid - cyl(cx, Y(cy), Z_TOP - FLOOR - 1, Z_TOP + 1, 1.6)
     if p['ref'] in ('D_PWR', 'D_RUN', 'D_ERR'):
         lid = lid - cyl(cx, Y(cy), Z_TOP - FLOOR - 1, Z_TOP + 1, 1.0)
-# vent grille over the CM5 cooler + side vents
-for i in range(8):
-    xs = M1[0] + 5.0 + i * 4.0
-    lid = lid - box(xs, Y(62.0), Z_TOP - FLOOR - 1, xs + 2.0, Y(18.0), Z_TOP + 1)
-for yk in (30.0, 45.0, 60.0):
+# ---- fan 40 x 40 mm (5 V, 2/3/4-wire) on top of the lid, blowing down onto the CM5 cooler
+#      opening dia 37 with a cross guard (2 mm bars), 4 x M3 holes on the standard 32 mm pattern
+FAN, FAN_HOLE, FAN_PITCH = 40.0, 37.0, 32.0
+FCX, FCY = (M1[0] + M1[2]) / 2, (M1[1] + M1[3]) / 2          # centre of the CM5 module (KiCad coords)
+opening = cyl(FCX, Y(FCY), Z_TOP - FLOOR - 1, Z_TOP + 1, FAN_HOLE / 2, 96)
+guard = (box(FCX - 1.0, Y(FCY) - FAN_HOLE / 2, Z_TOP - FLOOR, FCX + 1.0, Y(FCY) + FAN_HOLE / 2, Z_TOP) +
+         box(FCX - FAN_HOLE / 2, Y(FCY) - 1.0, Z_TOP - FLOOR, FCX + FAN_HOLE / 2, Y(FCY) + 1.0, Z_TOP) +
+         (cyl(FCX, Y(FCY), Z_TOP - FLOOR, Z_TOP, 10.0, 96) - cyl(FCX, Y(FCY), Z_TOP - FLOOR - 1, Z_TOP + 1, 8.5, 96)))
+lid = lid - opening + guard
+for dx in (-FAN_PITCH / 2, FAN_PITCH / 2):
+    for dy in (-FAN_PITCH / 2, FAN_PITCH / 2):
+        lid = lid - cyl(FCX + dx, Y(FCY) + dy, Z_TOP - FLOOR - 1, Z_TOP + 1, 1.7)      # M3 clearance
+# hot air leaves through the side vents (both walls, along the module and past it)
+for yk in (20.0, 32.0, 44.0, 56.0, 68.0):
     for xs, xe in ((X0 - 1, 0.5), (BW - 0.5, X0 + OX + 1)):
         lid = lid - box(xs, Y(yk + 8), Z_BT + 9, xe, Y(yk), Z_BT + 14)
 
@@ -172,6 +181,7 @@ rep = []
 rep.append('Outer size  %.1f x %.1f x %.1f mm' % (OX, OY, Z_TOP))
 rep.append('base: watertight=%s volume=%.1f cm3 ; lid: watertight=%s volume=%.1f cm3' % (tb.is_watertight, tb.volume / 1000, tl.is_watertight, tl.volume / 1000))
 rep.append('board bottom z=%.1f, board top z=%.1f, split z=%.1f' % (Z_BB, Z_BT, Z_SPLIT))
+rep.append('fan 40x40 on lid: centre KiCad (%.1f, %.1f), opening dia %.0f, M3 holes 32 mm pitch' % (FCX, FCY, FAN_HOLE))
 rep += report
 open(os.path.join(HERE, 'enclosure_report.txt'), 'w').write('\n'.join(rep) + '\n')
 print('\n'.join(rep))
